@@ -30,34 +30,29 @@ execSync('npm install --no-package-lock', { stdio: 'inherit' });
 // Build client
 console.log('🎨 Building client...');
 process.chdir('client');
-execSync('npm install --no-package-lock', { stdio: 'inherit' });
+execSync('npm install --include=dev --no-package-lock', { stdio: 'inherit' });
 execSync('npm run build', { stdio: 'inherit' });
 process.chdir('..');
 
 // Build server
 console.log('⚙️ Building server...');
 process.chdir('server');
-execSync('npm install --no-package-lock', { stdio: 'inherit' });
+execSync('npm install --include=dev --no-package-lock', { stdio: 'inherit' });
 execSync('npm run build', { stdio: 'inherit' });
 process.chdir('..');
 
 console.log('✅ Build completed successfully!');
-console.log('📁 Server output should be at: server/dist/index.js');
+console.log('📁 Server output should be at: server/dist/server/src/index.js');
 
 // Verify the file exists - CRITICAL for Railway
-if (fs.existsSync('server/dist/index.js')) {
-  console.log('✅ server/dist/index.js exists!');
+if (fs.existsSync('server/dist/server/src/index.js')) {
+  console.log('✅ server/dist/server/src/index.js exists!');
   console.log('✅ Build verification passed!');
 } else {
-  console.log('❌ server/dist/index.js NOT found!');
+  console.log('❌ server/dist/server/src/index.js NOT found!');
   console.log('📂 Checking server/dist/ directory...');
   try {
     if (fs.existsSync('server/dist')) {
-      const files = fs.readdirSync('server/dist');
-      console.log('📂 Contents of server/dist/:');
-      files.forEach(file => console.log(`   - ${file}`));
-      
-      // Try to find index.js in subdirectories
       const findIndexJs = (dir) => {
         const items = fs.readdirSync(dir);
         for (const item of items) {
@@ -77,6 +72,6 @@ if (fs.existsSync('server/dist/index.js')) {
   } catch (error) {
     console.log(`   Error checking directory: ${error.message}`);
   }
-  console.log('❌ BUILD FAILED: server/dist/index.js not found!');
+  console.log('❌ BUILD FAILED: server/dist/server/src/index.js not found!');
   process.exit(1);
 }
