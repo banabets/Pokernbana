@@ -1045,6 +1045,12 @@ export default function App() {
                         const v = ev.target?.result as string
                         if (v) {
                           setAvatar(v)
+                          // Guardar en localStorage para persistencia
+                          localStorage.setItem('selectedAvatar', v)
+                          // Enviar al servidor para sincronización con otros jugadores
+                          if (socket && socket.connected) {
+                            socket.emit(ClientEvents.UPDATE_AVATAR, v)
+                          }
                           addNotification('Custom avatar uploaded!')
                         }
                       }

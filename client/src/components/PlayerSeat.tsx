@@ -104,6 +104,7 @@ type Player = {
   isBot?: boolean
   isAllIn?: boolean
   hand?: Card[]
+  avatar?: string
   subscription?: 'free' | 'bronze' | 'silver' | 'gold' | 'diamond'
 }
 
@@ -148,8 +149,8 @@ export default function PlayerSeat({
         <AvatarWrap $active={!!isTurn} $scale={avatarScale}>
           {/* Personaje único basado en ID y tipo */}
           <CharacterDisplay $isBot={p.isBot} $isTurn={!!isTurn}>
-            {character && character.startsWith('http') ? (
-              // Es una URL de imagen (GIF/avatar personalizado)
+            {character && (character.startsWith('http') || character.startsWith('data:') || character.startsWith('blob:')) ? (
+              // Es una URL de imagen (GIF/avatar personalizado) o imagen base64
               <img
                 src={character}
                 alt="Avatar"
@@ -157,8 +158,8 @@ export default function PlayerSeat({
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
-                  borderRadius: '50%', // Hacer la imagen perfectamente circular
-                  display: 'block' // Evitar espacio extra debajo de la imagen
+                  borderRadius: '50%',
+                  display: 'block'
                 }}
                 onError={(e) => {
                   // Si la imagen falla, mostrar emoji por defecto
