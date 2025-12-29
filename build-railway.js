@@ -44,16 +44,39 @@ process.chdir('..');
 console.log('✅ Build completed successfully!');
 console.log('📁 Server output should be at: server/dist/index.js');
 
-// Verify the file exists
+// Verify the file exists - CRITICAL for Railway
 if (fs.existsSync('server/dist/index.js')) {
   console.log('✅ server/dist/index.js exists!');
+  console.log('✅ Build verification passed!');
 } else {
   console.log('❌ server/dist/index.js NOT found!');
-  console.log('📂 Contents of server/dist/:');
+  console.log('📂 Checking server/dist/ directory...');
   try {
-    const files = fs.readdirSync('server/dist');
-    files.forEach(file => console.log(`   - ${file}`));
+    if (fs.existsSync('server/dist')) {
+      const files = fs.readdirSync('server/dist');
+      console.log('📂 Contents of server/dist/:');
+      files.forEach(file => console.log(`   - ${file}`));
+      
+      // Try to find index.js in subdirectories
+      const findIndexJs = (dir) => {
+        const items = fs.readdirSync(dir);
+        for (const item of items) {
+          const fullPath = path.join(dir, item);
+          const stat = fs.statSync(fullPath);
+          if (stat.isDirectory()) {
+            findIndexJs(fullPath);
+          } else if (item === 'index.js') {
+            console.log(`   Found index.js at: ${fullPath}`);
+          }
+        }
+      };
+      findIndexJs('server/dist');
+    } else {
+      console.log('   Directory server/dist does not exist');
+    }
   } catch (error) {
-    console.log('   Directory does not exist');
+    console.log(`   Error checking directory: ${error.message}`);
   }
+  console.log('❌ BUILD FAILED: server/dist/index.js not found!');
+  process.exit(1);
 }

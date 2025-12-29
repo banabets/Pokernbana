@@ -4,7 +4,7 @@
     "buildCommand": "npm run build:railway"
   },
   "deploy": {
-    "startCommand": "node server/dist/index.js",
+    "startCommand": "npm start",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   },
