@@ -1,0 +1,47 @@
+🎮 ACCESO MÓVIL - INSTRUCCIONES RÁPIDAS
+
+┌─────────────────────────────────────────────────────────────┐
+│                    PASOS PARA JUGAR EN TELÉFONO              │
+└─────────────────────────────────────────────────────────────┘
+
+1️⃣ ENCUENTRA TU IP LOCAL:
+   • Abre PowerShell o CMD
+   • Escribe: ipconfig
+   • Busca "Dirección IPv4" (ejemplo: 192.168.1.100)
+
+2️⃣ CONFIGURA EL ACCESO:
+   • El servidor ya está configurado para aceptar conexiones externas
+   • No necesitas cambiar nada más
+
+3️⃣ ACCEDE DESDE TU TELÉFONO:
+   • Asegúrate de que tu teléfono esté en la MISMA red WiFi
+   • Abre el navegador en tu teléfono
+   • Ve a: http://TU_IP_LOCAL:5173
+
+   EJEMPLO: http://192.168.1.100:5173
+
+┌─────────────────────────────────────────────────────────────┐
+│                     EJEMPLOS DE IPs COMUNES                 │
+├─────────────────────────────────────────────────────────────┤
+│ 192.168.0.xxx   │ 192.168.1.xxx   │ 10.0.0.xxx             │
+│ 192.168.2.xxx   │ 172.16.xxx.xxx  │ 192.168.100.xxx        │
+└─────────────────────────────────────────────────────────────┘
+
+🎯 RESUMEN:
+- Computadora: http://localhost:5173 (para probar)
+- Teléfono: http://TU_IP_LOCAL:5173
+- Ambos deben estar en la misma red WiFi
+
+⚠️  NOTAS IMPORTANTES:
+• El servidor corre en el puerto 4000
+• El cliente (interfaz) corre en el puerto 5173
+• Si cambias de red, la IP puede cambiar
+
+🔧 SI NO FUNCIONA:
+• Verifica que ambos dispositivos estén en la misma red
+• Asegúrate de que no haya firewall bloqueando los puertos
+• Prueba con Chrome o Safari en el teléfono
+
+📱 ¡LISTO PARA JUGAR!
+
+

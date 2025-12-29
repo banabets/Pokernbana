@@ -1,0 +1,40 @@
+{
+  "name": "texas-holdem-fullstack",
+  "version": "0.4.0",
+  "description": "Poker Night by Banabets - Texas Hold'em Real Time Multiplayer Poker Game",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    "install:all": "npm install && npm run install:client && npm run install:server",
+    "install:client": "cd client && npm install",
+    "install:server": "cd server && npm install",
+    "start": "node server/dist/index.js",
+    "start:server": "node server/dist/index.js",
+    "build:railway": "node build-railway.js",
+    "preview": "npm run build:client && cd client && npm run preview",
+    "lint": "npm run lint:client && npm run lint:server",
+    "lint:client": "cd client && eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:server": "cd server && eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "status": "echo 'Client: http://localhost:5173+ (check terminal for exact port)' && echo 'Server: http://localhost:4000'"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "prettier": "^3.0.0"
+  },
+  "workspaces": [
+    "client",
+    "server"
+  ]
+}

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Test</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #1a1a1a;
+        }
+
+        .card {
+            width: 50px;
+            height: 70px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 2px;
+            background: white;
+        }
+
+        .card.black {
+            color: black;
+        }
+
+        .card.red {
+            color: red;
+        }
+
+        .card .r {
+            font-size: 16px;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body>
+    <div style="padding: 20px;">
+        <h2 style="color: white; margin-bottom: 20px;">Card Display Test</h2>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 10px; max-width: 800px;">
+            <!-- Test cards including 10 cards -->
+            <div style="text-align: center;">
+                <div class="card black">
+                    <div class="r">A</div>
+                    <div>♠</div>
+                </div>
+                <div style="color: white; font-size: 12px; margin-top: 5px;">A♠</div>
+            </div>
+
+            <div style="text-align: center;">
+                <div class="card red">
+                    <div class="r">10</div>
+                    <div>♥</div>
+                </div>
+                <div style="color: white; font-size: 12px; margin-top: 5px;">10♥</div>
+            </div>
+
+            <div style="text-align: center;">
+                <div class="card red">
+                    <div class="r">10</div>
+                    <div>♦</div>
+                </div>
+                <div style="color: white; font-size: 12px; margin-top: 5px;">10♦</div>
+            </div>
+
+            <div style="text-align: center;">
+                <div class="card black">
+                    <div class="r">10</div>
+                    <div>♣</div>
+                </div>
+                <div style="color: white; font-size: 12px; margin-top: 5px;">10♣</div>
+            </div>
+
+            <div style="text-align: center;">
+                <div class="card black">
+                    <div class="r">K</div>
+                    <div>♠</div>
+                </div>
+                <div style="color: white; font-size: 12px; margin-top: 5px;">K♠</div>
+            </div>
+
+            <div style="text-align: center;">
+                <div class="card black">
+                    <div class="r">Q</div>
+                    <div>♠</div>
+                </div>
+                <div style="color: white; font-size: 12px; margin-top: 5px;">Q♠</div>
+            </div>
+
+            <div style="text-align: center;">
+                <div class="card black">
+                    <div class="r">J</div>
+                    <div>♠</div>
+                </div>
+                <div style="color: white; font-size: 12px; margin-top: 5px;">J♠</div>
+            </div>
+
+            <div style="text-align: center;">
+                <div class="card black">
+                    <div class="r">9</div>
+                    <div>♠</div>
+                </div>
+                <div style="color: white; font-size: 12px; margin-top: 5px;">9♠</div>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; color: white;">
+            <h3>Resultado esperado:</h3>
+            <p>Las cartas de 10 deberían mostrar "10" claramente, no "T"</p>
+            <p>Las cartas rojas (♥ ♦) deberían aparecer en rojo</p>
+            <p>Las cartas negras (♠ ♣) deberían aparecer en negro</p>
+        </div>
+    </div>
+</body>
+</html>
+

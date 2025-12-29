@@ -1,0 +1,105 @@
+:root{
+  --felt-1:#0b3d0b;
+  --felt-2:#1b5e20;
+  --fg:#f2f6f3;
+  --muted:#c6d0c7;
+  --pill:#2a7c4a;
+  --pill-ring:#a9f5bf;
+  --card-red:#c62828;
+  --card-black:#1b1b1b;
+}
+html,body,#root{height:100%}
+body{margin:0;background: radial-gradient(120% 100% at 50% 20%, var(--felt-2) 0%, var(--felt-1) 65%);color:var(--fg);font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;}
+button{background:#234e2e;border:1px solid #1e3f25;color:var(--fg);padding:.5rem .8rem;border-radius:.6rem;cursor:pointer;}button[disabled]{opacity:.5; cursor:default}
+.pill{background: var(--pill);border: 2px solid #145c34;padding:.7rem 1.2rem;border-radius: 999px;box-shadow:0 0 0 .12rem rgba(169,245,191,.15),0 0 .8rem rgba(0,0,0,.3) inset;font-weight:700;}
+.pill:focus,.pill:hover{outline:none;box-shadow:0 0 0 .18rem var(--pill-ring),0 0 1.2rem rgba(0,0,0,.35) inset;}
+/* Lobby */
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:rgba(0,0,0,.25);border-bottom:1px solid rgba(255,255,255,.08)}
+.topbar .title{font-weight:900;letter-spacing:.6px}
+.topbar .actions{display:flex;gap:8px}
+.card-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;padding:16px}
+.room-card{background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px;box-shadow:0 6px 16px rgba(0,0,0,.2) inset}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:grid;place-items:center}
+.modal .box{background:#0f2f1b;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px;min-width:320px;max-width:90vw}
+/* Table */
+.table-wrap{position:relative;height:100%;padding: 10px 14px;}
+.table-oval{position:absolute; inset:60px 260px 160px 260px;border-radius: 50%;background: radial-gradient(90% 60% at 50% 40%, #246e30 0%, #165022 60%, #103a18 100%);border:6px solid rgba(255,255,255,.06);box-shadow:0 8px 40px rgba(0,0,0,.35) inset, 0 10px 30px rgba(0,0,0,.25);}
+.center-area{position:absolute; left:50%; top:42%; transform:translate(-50%,-50%); display:flex; gap:8px}
+.pot{position:absolute; left:50%; top:16%; transform: translateX(-50%); background: rgba(0,0,0,.35); padding:.35rem .8rem; border-radius:.8rem; font-weight:700;border:1px solid rgba(255,255,255,.12);}
+.seat{position:absolute; transform: translate(-50%,-50%); width: 300px; max-width:28vw; padding:10px; background: rgba(0,0,0,.24); border:1px solid rgba(255,255,255,.08); border-radius: 16px; box-shadow: 0 6px 20px rgba(0,0,0,.25) inset; z-index:1;}
+.badge{opacity:.85; font-size:.9rem}
+.avatar{width:38px;height:38px;border-radius:999px;background:#2a7c4a;display:inline-grid;place-items:center;margin-right:8px;border:2px solid rgba(255,255,255,.15)}
+.dealer{position:absolute;width:26px;height:26px;border-radius:50%;background:#ffe082;color:#222;display:grid;place-items:center;font-weight:800;top:-10px;right:-10px;border:2px solid rgba(0,0,0,.25)}
+.card{width:52px; height:72px; border-radius:10px; background:#fff; border:1px solid #cfcfcf; box-shadow:0 2px 6px rgba(0,0,0,.25); display:grid; place-items:center;}
+.card .r{font-weight:800}
+.card.red { color: #c62828; } .card.black{ color: #1b1b1b; }
+.actionbar{position:absolute; left:50%; bottom:12px; transform:translateX(-50%); display:flex; gap:12px; align-items:center; background: rgba(0,0,0,.25); padding:10px 12px; border-radius:16px; border:1px solid rgba(255,255,255,.08); z-index:20;}
+.actionbar input{width:90px; padding:.55rem .6rem; border-radius:.5rem; border:1px solid #134e2d; background:#0e371f; color:var(--fg)}
+
+/* --- v3 additions --- */
+.table-oval.skin-green{background: radial-gradient(90% 60% at 50% 40%, #246e30 0%, #165022 60%, #103a18 100%);}
+.table-oval.skin-blue {background: radial-gradient(90% 60% at 50% 40%, #2b3b8f 0%, #1b2666 60%, #121a4a 100%);}
+.table-oval.skin-purple {background: radial-gradient(90% 60% at 50% 40%, #5c2a8a 0%, #3a1761 60%, #230e3d 100%);}
+
+.dealer-icon{
+  position:absolute; left:50%; top:4%;
+  transform:translateX(-50%);
+  width:80px; height:80px; border-radius:50%;
+  background: radial-gradient(circle at 40% 35%, #ff6b81, #ad1a38);
+  display:grid; place-items:center; font-size:36px; box-shadow:0 8px 18px rgba(0,0,0,.35), inset 0 6px 16px rgba(255,255,255,.2);
+  border:3px solid rgba(255,255,255,.25);
+}
+
+.chip{
+  width:22px; height:22px; border-radius:50%;
+  background: radial-gradient(circle at 35% 35%, #e0e0e0, #bdbdbd);
+  border:3px solid #2e7d32;
+  box-shadow: 0 2px 6px rgba(0,0,0,.45);
+  position:absolute;
+  transition: left .65s cubic-bezier(.2,.8,.2,1), top .65s cubic-bezier(.2,.8,.2,1);
+  z-index:30;
+}
+
+.balance-badge{
+  background:rgba(0,0,0,.3); padding:.35rem .6rem; border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+}
+
+/* Lower the actionbar slightly more to avoid overlap in some viewports */
+.actionbar{ bottom: 16px; }
+
+/* ===== v3.2 Lobby Layout ===== */
+.lobby-grid{
+  display:grid;
+  grid-template-columns: 1fr 320px;
+  gap:12px;
+  height: calc(100vh - 56px);
+}
+.lobby-main{ padding:12px; overflow:auto; }
+.chat-dock{
+  display:flex; flex-direction:column;
+  background: rgba(0,0,0,.25);
+  border-left:1px solid rgba(255,255,255,.08);
+  padding:10px; border-radius:12px 0 0 12px;
+  height: calc(100vh - 56px);
+}
+.chat-list{ flex:1; overflow:auto; display:grid; gap:8px; padding-right:6px; }
+.chat-msg{ max-width:85%; padding:8px 10px; border-radius:14px; background:rgba(255,255,255,.08); line-height:1.2; }
+.me .chat-msg{ background:#2a7c4a; }
+.chat-row{ display:flex; gap:8px; align-items:flex-end; }
+.chat-emoji{ display:flex; gap:6px; margin:6px 0; }
+.chat-input{ display:flex; gap:8px; }
+.chat-input input{ flex:1; padding:.55rem .6rem; border-radius:.5rem; border:1px solid #134e2d; background:#0e371f; color:var(--fg) }
+
+/* Leaderboard preview */
+.lb-preview{ background:rgba(0,0,0,.22); border:1px solid rgba(255,255,255,.08); padding:10px; border-radius:12px; margin-bottom:10px; }
+.lb-row{ display:flex; justify-content:space-between; padding:4px 0; }
+
+/* Lobby backgrounds */
+body.theme-casino{ background: radial-gradient(120% 100% at 50% 20%, #1b5e20 0%, #0b3d0b 65%) }
+body.theme-beach { background: radial-gradient(120% 100% at 50% 20%, #2aa9d9 0%, #0d3b66 70%) }
+body.theme-space { background: radial-gradient(120% 100% at 50% 20%, #2b3b8f 0%, #121a4a 65%) }
+
+/* Room card avatars row */
+.room-avatars{ display:flex; gap:6px; margin-top:8px; align-items:center; flex-wrap:wrap; }
+.room-avatars .av{ width:26px; height:26px; border-radius:50%; display:grid; place-items:center; background:#2a7c4a; border:2px solid rgba(255,255,255,.15) }

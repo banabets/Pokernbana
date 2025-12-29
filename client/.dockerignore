@@ -1,0 +1,44 @@
+# Node.js dependencies - will be installed inside container
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+
+# Git
+.git
+.gitignore
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Environment files (except production example)
+.env*
+!.env.production.example
+
+# Cache directories
+.cache/
+.parcel-cache/
+.vite/
+.eslintcache
+
+# Test coverage
+coverage/
+
+# Temporary files
+*.tmp
+*.temp

@@ -1,0 +1,76 @@
+{
+  "name": "Poker Night by Banabets",
+  "short_name": "Poker Night",
+  "description": "Texas Hold'em Real Time Multiplayer Poker Game",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a1a0f",
+  "theme_color": "#ffd700",
+  "orientation": "landscape-primary",
+  "categories": ["games", "entertainment", "social"],
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "/favicon-animated.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Quick Game",
+      "short_name": "Quick Play",
+      "description": "Start a quick poker game",
+      "url": "/?action=quick-game",
+      "icons": [
+        {
+          "src": "/favicon-animated.svg",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Create Table",
+      "short_name": "New Table",
+      "description": "Create a new poker table",
+      "url": "/?action=create-table",
+      "icons": [
+        {
+          "src": "/favicon-animated.svg",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}

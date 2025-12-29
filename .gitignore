@@ -1,0 +1,89 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage / caches
+coverage
+*.lcov
+.nyc_output
+.grunt
+.cache
+.parcel-cache
+.temp
+.cache/
+.docusaurus
+.vscode-test
+
+# Dependencies / builds
+node_modules/
+jspm_packages/
+web_modules/
+dist
+build/Release
+.next
+out
+.nuxt
+.vuepress/dist
+**/.vitepress/dist
+**/.vitepress/cache
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+
+# TypeScript
+*.tsbuildinfo
+
+# npm / yarn / pnpm
+.npm
+.yarn-integrity
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Dotenv
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# Client/Server subtrees
+client/node_modules/
+client/dist/
+server/node_modules/
+server/dist/
+shared/node_modules/
+shared/dist/
+
+# Basura pesada / exportaciones que no van al repo
+*_files/
+*.gif
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.svg
+*.mp4
+*.mov
+*.psd
+
+# Repos anidados que no deben trackearse
+POKERN-clean/
+POKERNIGHT/

@@ -1,0 +1,5 @@
+[33m7d9e324[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m fixes.
+[33ma3496fb[m fix: add .js extensions to ES module imports for production compatibility
+[33m7b2b120[m Fix Table type error - use lastBetSize instead of currentBet
+[33m036ae20[m Fix Table type error - use lastBetSize instead of currentBet
+[33ma3a49fd[m Fix missing currentBet property in TableState

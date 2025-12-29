@@ -1,0 +1,1497 @@
+:root {
+  --topbar-h: 56px; /* se sincroniza en App.tsx */
+
+  /* Breakpoints responsive */
+  --mobile: 480px;
+  --tablet: 768px;
+  --desktop: 1024px;
+  --large: 1200px;
+
+  /* Espaciado responsive */
+  --spacing-xs: clamp(4px, 1vw, 8px);
+  --spacing-sm: clamp(8px, 2vw, 12px);
+  --spacing-md: clamp(12px, 3vw, 16px);
+  --spacing-lg: clamp(16px, 4vw, 20px);
+  --spacing-xl: clamp(20px, 5vw, 24px);
+
+  /* Tipografía responsive */
+  --text-xs: clamp(10px, 2.5vw, 12px);
+  --text-sm: clamp(12px, 3vw, 14px);
+  --text-base: clamp(14px, 3.5vw, 16px);
+  --text-lg: clamp(16px, 4vw, 18px);
+  --text-xl: clamp(18px, 5vw, 20px);
+
+  /* Componentes responsive */
+  --button-min-width: clamp(80px, 15vw, 120px);
+  --card-padding: clamp(8px, 3vw, 16px);
+  --border-radius: clamp(8px, 2vw, 16px);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 100% !important;
+  min-height: 100vh !important;
+  min-height: -webkit-fill-available !important; /* iOS Safari fix */
+  overflow-x: hidden;
+}
+
+/* iOS Safari specific fixes */
+html {
+  height: -webkit-fill-available;
+}
+
+body {
+  min-height: -webkit-fill-available;
+}
+
+/* Fix for iPhone notch and home indicator */
+@supports (padding: max(0px)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-top: env(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  .lobby-main.mobile-layout {
+    padding-bottom: calc(60px + env(safe-area-inset-bottom)) !important;
+    padding-top: env(safe-area-inset-top) !important;
+  }
+
+  .mobile-chat-toggle {
+    bottom: calc(var(--spacing-sm) + env(safe-area-inset-bottom)) !important;
+    right: calc(var(--spacing-sm) + env(safe-area-inset-right)) !important;
+  }
+
+  /* Asegurar que el topbar respete el safe area */
+  .topbar {
+    padding-top: calc(var(--spacing-sm) + env(safe-area-inset-top)) !important;
+    padding-left: calc(var(--spacing-lg) + env(safe-area-inset-left)) !important;
+    padding-right: calc(var(--spacing-lg) + env(safe-area-inset-right)) !important;
+  }
+
+  /* Asegurar que el lobby ocupe toda la altura disponible con safe area */
+  .lobby-grid {
+    height: calc(100dvh - var(--topbar-h) - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+    min-height: calc(100dvh - var(--topbar-h) - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* Additional iOS fixes */
+#root {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  height: 100%;
+}
+
+/* Prevent rubber band scrolling on iOS */
+body {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: none;
+}
+
+/* Ensure full height on iOS devices */
+.app {
+  min-height: 100dvh; /* Dynamic viewport height */
+  min-height: -webkit-fill-available;
+  height: 100%;
+}
+
+html {
+  font-size: 16px;
+}
+
+body.theme-casino {
+  background:
+    radial-gradient(ellipse 200% 100% at 50% 0%, #0a1a0f 0%, #0d2518 25%, #0f2a1d 50%, #0a1a0f 100%),
+    linear-gradient(135deg, rgba(84,255,138,0.03) 0%, rgba(0,160,255,0.02) 50%, rgba(255,215,0,0.01) 100%),
+    linear-gradient(45deg, rgba(255,0,150,0.01) 0%, rgba(255,100,0,0.01) 100%);
+  background-attachment: fixed !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  color: #eaf5ea;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  position: relative;
+  min-height: 100vh !important;
+  height: 100vh !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin: 0 !important;
+  padding: 0 !important;
+
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+      radial-gradient(circle at 20% 80%, rgba(84,255,138,0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(0,160,255,0.03) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(255,215,0,0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  &::after {
+    content: '';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(84,255,138,0.02) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: -1;
+    animation: lobbyPulse 8s ease-in-out infinite;
+  }
+}
+
+@keyframes lobbyPulse {
+  0%,100% { opacity: 0.3; }
+  50% { opacity: 0.5; }
+}
+
+/* Desactivar animaciones complejas en móviles */
+@media (max-width: 768px) {
+  .lobbyPulse {
+    animation: none !important;
+  }
+
+  /* Simplificar gradientes complejos */
+  body.theme-casino::before,
+  body.theme-casino::after {
+    animation: none !important;
+    opacity: 0.5 !important;
+  }
+}
+body.theme-beach { background: linear-gradient(180deg,#d0f0ff,#ffe6b3); color:#123; }
+body.theme-space { background: radial-gradient(120% 120% at 50% -10%, #0b0f2a, #050814 70%); color:#e9ecff; }
+
+.app {
+  min-height: 100vh;
+  height: 100vh;
+  position: relative;
+  background:
+    radial-gradient(ellipse 200% 100% at 50% 0%, #0a1a0f 0%, #0d2518 25%, #0f2a1d 50%, #0a1a0f 100%),
+    linear-gradient(135deg, rgba(84,255,138,0.03) 0%, rgba(0,160,255,0.02) 50%, rgba(255,215,0,0.01) 100%),
+    linear-gradient(45deg, rgba(255,0,150,0.01) 0%, rgba(255,100,0,0.01) 100%) !important;
+  background-attachment: fixed !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Topbar fijo */
+.topbar{
+  position: fixed; inset: 0 0 auto 0;
+  display: grid; grid-template-columns: auto 1fr auto;
+  align-items: center; gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: rgba(0,0,0,.28);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  min-height: var(--topbar-h);
+}
+.topbar .title-section {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-width: 0; /* Permite que se recorte */
+}
+.topbar .title {
+  font-weight: 800;
+  letter-spacing:.3px;
+  font-size: var(--text-lg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.topbar .actions{
+  display:flex;
+  gap: var(--spacing-xs);
+  align-items:center;
+}
+
+/* Topbar responsive */
+@media (max-width: 768px) {
+  .topbar {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    gap: var(--spacing-xs);
+  }
+
+  .topbar .title {
+    font-size: var(--text-base);
+    max-width: 120px;
+  }
+
+  .topbar .actions {
+    gap: var(--spacing-xs);
+  }
+
+  .topbar .actions button {
+    font-size: var(--text-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  /* Mostrar botón hamburguesa en tablets */
+  .mobile-menu-toggle {
+    display: flex !important;
+  }
+
+  /* Ocultar algunos elementos en tablets */
+  .topbar .actions .pill:not(.primary) {
+    display: none;
+  }
+
+  .online-badge {
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    grid-template-columns: auto auto 1fr;
+    padding: var(--spacing-xs);
+    gap: var(--spacing-xs);
+  }
+
+  .topbar .title-section {
+    grid-column: 1;
+  }
+
+  .topbar .title {
+    font-size: var(--text-sm);
+    max-width: 100px;
+  }
+
+  /* Balance badge se oculta en móviles pequeños */
+  .balance-badge {
+    display: none;
+  }
+
+  /* Todos los elementos de actions se ocultan en móviles */
+  .topbar .actions {
+    display: none !important;
+  }
+
+  .topbar .user-info {
+    display: none !important;
+  }
+}
+.avatar{
+  width: clamp(24px, 6vw, 32px);
+  height: clamp(24px, 6vw, 32px);
+  display:grid;
+  place-items:center;
+  background:rgba(255,255,255,.12);
+  border-radius:50%;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.2);
+}
+.balance-badge{
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius:999px;
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.08);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-xs);
+}
+.online-badge{
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius:999px;
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.08);
+  font-weight:700;
+  font-size: var(--text-xs);
+}
+
+/* Online Badge Styles */
+.online-pill {
+  background: rgba(46, 204, 113, 0.15) !important;
+  border: 1px solid rgba(46, 204, 113, 0.3) !important;
+  color: #2ecc71 !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  padding: 6px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.online-dot {
+  width: 8px !important;
+  height: 8px !important;
+  background: #2ecc71 !important;
+  border-radius: 50% !important;
+  animation: online-pulse 2s infinite !important;
+}
+
+@keyframes online-pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* Botón */
+.pill{
+  height: clamp(32px, 8vw, 40px);
+  padding: 0 var(--spacing-md);
+  border-radius: var(--border-radius);
+  border: none;
+  cursor: pointer;
+  background: rgba(255,255,255,.12);
+  color: inherit;
+  font-weight: 800;
+  font-size: var(--text-sm);
+  box-shadow: 0 8px 18px rgba(0,0,0,.28);
+  transition: transform .15s ease, filter .15s ease, background .15s ease;
+  min-width: var(--button-min-width);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+.pill:hover{ transform: translateY(-1px); filter: brightness(1.05); }
+.pill.primary{ background: linear-gradient(#f0c45a,#b8841a); color:#1a1200; }
+.pill.active{ outline:2px solid rgba(255,255,255,.5); }
+
+/* Botones responsive */
+@media (max-width: 768px) {
+  .pill {
+    height: clamp(28px, 7vw, 36px);
+    padding: 0 var(--spacing-sm);
+    font-size: var(--text-xs);
+    min-width: calc(var(--button-min-width) * 0.8);
+  }
+}
+
+@media (max-width: 480px) {
+  .pill {
+    height: clamp(24px, 6vw, 32px);
+    padding: 0 var(--spacing-xs);
+    font-size: var(--text-xs);
+    min-width: calc(var(--button-min-width) * 0.7);
+  }
+}
+
+/* Layout lobby - REMOVED: conflicts with .lobby-grid */
+
+/* Layout lobby responsive - REMOVED: conflicts with .lobby-grid */
+
+/* Mobile lobby styles - REMOVED: conflicts with .lobby-grid */
+
+/* Mobile small lobby styles - REMOVED: conflicts with .lobby-grid */
+
+/* Cards base */
+.card{
+  border-radius: var(--border-radius);
+  background: linear-gradient(180deg, rgba(16,65,39,.7), rgba(10,44,26,.65));
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 16px 30px rgba(0,0,0,.35);
+  padding: var(--card-padding);
+}
+
+/* Cards responsive */
+@media (max-width: 768px) {
+  .card {
+    border-radius: calc(var(--border-radius) * 0.8);
+    padding: calc(var(--card-padding) * 0.8);
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    border-radius: calc(var(--border-radius) * 0.6);
+    padding: calc(var(--card-padding) * 0.6);
+  }
+}
+
+/* Leaderboard preview */
+.lb-preview .card-top{ display:flex; justify-content:center; align-items:center; flex-direction:column; margin-bottom:8px; text-align:center; }
+
+.lb-preview .card-top > div { display:flex; flex-direction:column; align-items:center; text-align:center; }
+
+.lb-preview .card-top .lb-title { margin-bottom:4px; }
+
+.lb-preview .card-top .pill { margin-top:6px; }
+.lb-row{ display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed rgba(255,255,255,.08); }
+.lb-row:last-child{ border-bottom:none; }
+.medal{ margin-right:6px; }
+
+/* Lista de salas */
+.card-list{
+  display: grid; gap: var(--spacing-md);
+  grid-template-columns: repeat(auto-fill, minmax(clamp(280px, 45vw, 320px), 1fr));
+}
+
+/* Lista de salas en móviles */
+@media (max-width: 768px) {
+  .card-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    width: 100%;
+    max-width: 100%;
+    overflow-y: auto;
+    padding-bottom: 20px;
+  }
+
+  .card-list > * {
+    width: 100%;
+    max-width: 100%;
+    flex-shrink: 0;
+  }
+}
+.room-card{
+  position: relative;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.room-card:hover{ transform: perspective(700px) rotateX(2deg) rotateY(-2deg) translateY(-2px); box-shadow: 0 22px 36px rgba(0,0,0,.45); }
+
+/* Lista de salas responsive */
+@media (max-width: 768px) {
+  .card-list {
+    gap: var(--spacing-sm);
+    grid-template-columns: repeat(auto-fill, minmax(clamp(250px, 90vw, 300px), 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .card-list {
+    gap: var(--spacing-xs);
+    grid-template-columns: 1fr; /* Una columna en móviles pequeños */
+  }
+
+  .room-card:hover {
+    transform: none; /* Desactivar hover en móviles */
+  }
+}
+.room-card.busy::after{
+  content:'En juego';
+  position:absolute; top:10px; right:10px;
+  font-size:11px; font-weight:800; padding:3px 8px; border-radius:999px;
+  background:#ffd66b; color:#1a1200;
+}
+
+/* Preview “fieltro” */
+.room-card .preview{
+  height: 120px; border-radius: 12px; margin-bottom: 10px;
+  background:
+    radial-gradient(140% 100% at 50% -10%, rgba(255,255,255,.08), transparent 50%),
+    radial-gradient(220% 160% at 50% 20%, #166a36 0%, #0f3f20 65%, #082313 100%);
+  border: 1px solid rgba(255,255,255,.06);
+  box-shadow: inset 0 10px 20px rgba(0,0,0,.35);
+  position: relative; overflow: hidden;
+}
+.room-card .preview::before, .room-card .preview::after{
+  content:''; position:absolute; width:16px; height:16px; border-radius:50%;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 2px 4px rgba(0,0,0,.35);
+  animation: float 3.5s ease-in-out infinite;
+}
+@keyframes float{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-6px) } }
+.room-card .preview::before{ left:14%; top:18%; background: linear-gradient(#d33,#a11); }
+.room-card .preview::after{ right:12%; bottom:16%; background: linear-gradient(#6bb0ff,#1c43b7); animation-delay:.8s; }
+
+.room-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.room-head .sub{ opacity:.8; font-size:12px; }
+.badge{
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius);
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.08);
+  font-weight:800;
+  font-size: var(--text-xs);
+}
+.room-actions{
+  display:flex;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+.room-avatars{
+  display:flex;
+  gap: var(--spacing-xs);
+}
+.av{
+  width: clamp(20px, 5vw, 28px);
+  height: clamp(20px, 5vw, 28px);
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:rgba(255,255,255,.12);
+}
+
+/* Aside (chat dock) */
+.lobby-aside{
+  position: sticky;
+  top: calc(var(--topbar-h) + var(--spacing-xs));
+  align-self:start;
+}
+
+/* Aside responsive */
+@media (max-width: 768px) {
+  .lobby-aside {
+    position: static; /* No sticky en móviles */
+    order: -1; /* Aparece antes del contenido principal */
+  }
+}
+
+/* Modales */
+.modal{
+  position:fixed;
+  inset:0;
+  display:grid;
+  place-items:center;
+  background:rgba(0,0,0,.45);
+  z-index:1000;
+  padding: var(--spacing-sm);
+}
+.box{
+  width: min(540px, 90vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: linear-gradient(180deg, rgba(16,65,39,.95), rgba(10,44,26,.95));
+  color:#eaf5ea;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 24px 60px rgba(0,0,0,.65);
+}
+.box-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom: var(--spacing-sm);
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+.store-group{ margin-top: var(--spacing-md); }
+.choices{
+  display:flex;
+  flex-wrap:wrap;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+}
+
+/* Modales responsive */
+@media (max-width: 768px) {
+  .modal {
+    padding: var(--spacing-xs);
+  }
+
+  .box {
+    width: 95vw;
+    padding: var(--spacing-md);
+    border-radius: calc(var(--border-radius) * 0.8);
+  }
+
+  .box-top {
+    margin-bottom: var(--spacing-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .box {
+    width: 98vw;
+    padding: var(--spacing-sm);
+    border-radius: calc(var(--border-radius) * 0.6);
+  }
+
+  .choices {
+    gap: var(--spacing-xs);
+  }
+}
+
+/* ===== OPTIMIZACIONES ESPECÍFICAS PARA MÓVILES ===== */
+
+/* Evitar zoom en inputs en iOS */
+@media screen and (max-width: 768px) {
+  input[type="text"],
+  input[type="number"],
+  textarea,
+  select {
+    font-size: 16px !important; /* Previene zoom en iOS */
+  }
+}
+
+/* Mejorar scroll en móviles */
+@media (max-width: 768px) {
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Mejorar rendimiento en móviles */
+  .card, .modal, .topbar {
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+}
+
+/* Optimizar para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  /* Ocultar elementos no esenciales en móviles muy pequeños */
+  .online-badge {
+    display: none;
+  }
+
+  /* Desactivar animaciones problemáticas en móviles para mejor rendimiento */
+  .card, .modal, .topbar {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Mantener solo transiciones críticas para UX */
+  .pill, .mobile-menu-btn {
+    transition: background-color 0.2s ease, transform 0.1s ease !important;
+  }
+}
+
+/* Optimizar touch targets */
+@media (max-width: 768px) {
+  button, .pill, .av, [role="button"] {
+    min-height: 44px; /* Recomendación de Apple para touch targets */
+    min-width: 44px;
+  }
+}
+
+/* Mejorar legibilidad en móviles */
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  /* Aumentar contraste en móviles */
+  .card {
+    background: linear-gradient(180deg, rgba(16,65,39,.8), rgba(10,44,26,.75));
+  }
+
+  /* Los temas heredan el fondo base, pero theme-casino mantiene consistencia */
+  body.theme-casino {
+    background: inherit;
+  }
+}
+
+/* ===== MENÚ HAMBURGUESA Y MENÚ MÓVIL ===== */
+
+/* Botón hamburguesa */
+.mobile-menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.mobile-menu-toggle:hover {
+  background: rgba(0, 0, 0, 0.5);
+  transform: scale(1.05);
+}
+
+.hamburger-line {
+  width: 20px;
+  height: 2px;
+  background: #eaf5ea;
+  margin: 2px 0;
+  transition: all 0.3s ease;
+  border-radius: 1px;
+}
+
+/* Overlay del menú móvil */
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 2000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: calc(var(--topbar-h) + 20px);
+}
+
+/* Menú móvil */
+.mobile-menu {
+  background: linear-gradient(180deg, rgba(16,65,39,.95), rgba(10,44,26,.95));
+  border-radius: var(--border-radius);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 90%;
+  max-width: 320px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header del menú móvil */
+.mobile-menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-menu-header h3 {
+  margin: 0;
+  color: #eaf5ea;
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.mobile-menu-close {
+  background: none;
+  border: none;
+  color: #eaf5ea;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.mobile-menu-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Contenido del menú móvil */
+.mobile-menu-content {
+  padding: var(--spacing-md);
+}
+
+/* Información del usuario en el menú móvil */
+.mobile-user-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: calc(var(--border-radius) * 0.8);
+}
+
+.avatar-large {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  font-size: 24px;
+}
+
+.mobile-user-details {
+  flex: 1;
+}
+
+.mobile-user-details .user-name {
+  color: #eaf5ea;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.mobile-user-details .user-balance {
+  color: #54ff8a;
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+/* Botones del menú móvil */
+.mobile-menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.mobile-menu-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border-radius: calc(var(--border-radius) * 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.3);
+  color: #eaf5ea;
+  font-size: var(--text-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  justify-content: flex-start;
+}
+
+.mobile-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.mobile-menu-btn.primary {
+  background: linear-gradient(135deg, #54ff8a, #00a0ff);
+  color: #0a1a0f;
+  border: none;
+}
+
+.mobile-menu-btn.primary:hover {
+  background: linear-gradient(135deg, #4ade80, #3b82f6);
+}
+
+/* Sección online en menú móvil */
+.mobile-online-section {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: calc(var(--border-radius) * 0.8);
+  text-align: center;
+}
+
+.mobile-online-section .online-pill {
+  justify-content: center;
+  margin: 0;
+}
+
+/* Responsive para el menú hamburguesa */
+@media (max-width: 768px) {
+  .mobile-menu-toggle {
+    display: flex !important;
+    order: 3; /* Colocar al final del grid */
+  }
+
+  .topbar .actions {
+    display: none;
+  }
+
+  .topbar .user-info {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-menu-overlay {
+    padding-top: calc(var(--topbar-h) + 10px);
+  }
+
+  .mobile-menu {
+    width: 95%;
+    max-height: 85vh;
+  }
+
+  .mobile-menu-content {
+    padding: var(--spacing-sm);
+  }
+
+  .mobile-user-info {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-sm);
+  }
+
+  .avatar-large {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+  }
+
+  .mobile-menu-btn {
+    padding: var(--spacing-sm);
+    font-size: var(--text-sm);
+  }
+
+  /* Asegurar que el botón hamburguesa esté visible y posicionado correctamente */
+  .mobile-menu-toggle {
+    display: flex !important;
+    order: 2; /* Después del título, antes del espacio vacío */
+  }
+
+  /* Ajustar el grid para móviles */
+  .topbar {
+    grid-template-columns: auto auto 1fr !important;
+  }
+}
+
+/* ===== LAYOUT MÓVIL PARA LOBBY - REMOVED: conflicts with .lobby-grid ===== */
+
+/* ===== DESKTOP/MOBILE CHAT VISIBILITY ===== */
+
+/* Desktop chat - visible by default */
+.desktop-chat {
+  display: block;
+}
+
+.mobile-chat {
+  display: none;
+}
+
+/* Mobile chat - show only on mobile */
+@media (max-width: 768px) {
+  .desktop-chat {
+    display: none;
+  }
+
+  .mobile-chat {
+    display: block;
+  }
+
+  /* Ajustar posición del Top 3 Players en móviles */
+  .lb-preview {
+    margin-top: -10px !important; /* Menos negativo = más abajo */
+    margin-bottom: calc(var(--spacing-lg) + 8px) !important; /* Más separación */
+    transform: translateY(-5px); /* Menos movimiento hacia arriba */
+  }
+
+  /* Centrar textos del Top 3 Players en móviles */
+  .lb-preview .card-top {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .lb-preview .card-top > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .lb-preview .card-top .lb-title {
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .lb-preview .card-top .pill {
+    margin-top: 8px;
+    align-self: center;
+  }
+}
+
+/* ===== CHAT MÓVIL FLOTANTE ===== */
+
+/* Botón flotante de chat */
+.mobile-chat-toggle {
+  position: fixed;
+  bottom: var(--spacing-md);
+  right: var(--spacing-md);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #54ff8a, #00a0ff);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  color: #0a1a0f;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.mobile-chat-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+}
+
+.mobile-chat-toggle:active {
+  transform: scale(0.95);
+}
+
+/* Badge de notificaciones */
+.chat-notification-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ef4444;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  border: 2px solid #0a1a0f;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Chat expandido móvil */
+.mobile-chat-expanded {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70vh;
+  background: linear-gradient(180deg, rgba(16,65,39,.98), rgba(10,44,26,.98));
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  border: 2px solid rgba(84, 255, 138, 0.3);
+  border-bottom: none;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Header del chat móvil */
+.mobile-chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.mobile-chat-header h3 {
+  margin: 0;
+  color: #eaf5ea;
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.mobile-chat-close {
+  background: none;
+  border: none;
+  color: #eaf5ea;
+  font-size: 24px;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.mobile-chat-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Contenido del chat móvil */
+.mobile-chat-content {
+  flex: 1;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* Ajustes adicionales para móviles pequeños */
+@media (max-width: 480px) {
+  /* Ajustar aún más la posición del Top 3 Players en móviles pequeños */
+  .lb-preview {
+    margin-top: -15px !important; /* Menos negativo = más abajo */
+    margin-bottom: calc(var(--spacing-lg) + 12px) !important; /* Más separación */
+    transform: translateY(-8px); /* Menos movimiento hacia arriba */
+  }
+
+  /* Centrar textos del Top 3 Players en móviles pequeños */
+  .lb-preview .card-top {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .lb-preview .card-top > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .lb-preview .card-top .lb-title {
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .lb-preview .card-top .pill {
+    margin-top: 8px;
+    align-self: center;
+  }
+
+  .mobile-chat-toggle {
+    bottom: var(--spacing-sm);
+    right: var(--spacing-sm);
+    width: 50px;
+    height: 50px;
+    font-size: 18px;
+  }
+
+  .mobile-chat-expanded {
+    height: 75vh;
+  }
+
+  .mobile-chat-header {
+    padding: var(--spacing-sm);
+  }
+
+  .mobile-chat-header h3 {
+    font-size: var(--text-base);
+  }
+}
+
+/* Estilos específicos para chat en modo móvil */
+.mobile-chat-mode {
+  height: 100% !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.mobile-chat-mode .chat-list {
+  padding: var(--spacing-sm) !important;
+  gap: var(--spacing-xs) !important;
+}
+
+.mobile-chat-mode .chat-bubble {
+  max-width: 90% !important;
+  font-size: var(--text-sm) !important;
+}
+
+.mobile-chat-mode .chat-input {
+  padding: var(--spacing-sm) !important;
+  gap: var(--spacing-xs) !important;
+}
+
+.mobile-chat-mode .chat-input textarea {
+  font-size: var(--text-sm) !important;
+  padding: var(--spacing-xs) var(--spacing-sm) !important;
+}
+
+.mobile-chat-mode .send-btn {
+  padding: var(--spacing-xs) var(--spacing-sm) !important;
+  font-size: var(--text-xs) !important;
+  min-width: 60px !important;
+}
+
+.mobile-chat-mode .chat-emoji {
+  padding: 0 var(--spacing-sm) var(--spacing-sm) !important;
+  gap: var(--spacing-xs) !important;
+}
+
+.mobile-chat-mode .chat-emoji .pill {
+  padding: var(--spacing-xs) !important;
+  font-size: var(--text-sm) !important;
+  min-width: 40px !important;
+  height: 32px !important;
+}
+
+/* ===== TOPBAR Y BOTONES FLOTANTES PARA MESA ===== */
+
+/* Contenedor para los botones fijos */
+.table-sticky-buttons {
+  display: none; /* Oculto por defecto */
+}
+
+/* TopBar normal en desktop */
+.table-topbar {
+  display: block;
+}
+
+/* Ocultar TopBar en móvil */
+@media (max-width: 768px) {
+  .table-topbar {
+    display: none !important;
+  }
+}
+
+/* Botón flotante Back to Lobby - esquina superior izquierda */
+.table-back-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1100; /* Por encima del ActionBar */
+  display: none; /* Oculto por defecto */
+}
+
+.table-back-button button {
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid #54ff8a;
+  border-radius: 12px;
+  color: #54ff8a;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(84, 255, 138, 0.3);
+}
+
+.table-back-button button:hover {
+  background: rgba(84, 255, 138, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(84, 255, 138, 0.4);
+}
+
+/* Botón flotante Start Hand - esquina superior derecha */
+.table-start-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1100; /* Por encima del ActionBar */
+  display: none; /* Oculto por defecto */
+}
+
+.table-start-button button {
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid #ffd700;
+  border-radius: 12px;
+  color: #ffd700;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.table-start-button button:hover {
+  background: rgba(255, 215, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+}
+
+/* Mostrar botones flotantes solo en móvil */
+@media (max-width: 768px) {
+  .table-sticky-buttons {
+    display: block;
+  }
+
+  .table-back-button,
+  .table-start-button {
+    display: block;
+  }
+}
+
+/* Responsive para móviles pequeños */
+@media (max-width: 480px) {
+  .table-back-button {
+    top: 15px;
+    left: 15px;
+  }
+
+  .table-start-button {
+    top: 15px;
+    right: 15px;
+  }
+
+  .table-back-button button,
+  .table-start-button button {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+}
+
+/* ===== CHAT FLOTANTE PARA MESA ===== */
+
+/* Desktop chat - visible by default */
+.desktop-chat-table {
+  display: block;
+}
+
+.mobile-chat-table {
+  display: none;
+}
+
+/* Mobile chat - show only on mobile */
+@media (max-width: 768px) {
+  .desktop-chat-table {
+    display: none;
+  }
+
+  .mobile-chat-table {
+    display: block;
+  }
+}
+
+/* Botón flotante de chat para mesa */
+.mobile-chat-toggle-table {
+  position: fixed;
+  bottom: calc(var(--spacing-lg) + env(safe-area-inset-bottom));
+  right: calc(var(--spacing-md) + env(safe-area-inset-right));
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #54ff8a, #00a0ff);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  color: #0a1a0f;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  z-index: 1001;
+}
+
+.mobile-chat-toggle-table:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+}
+
+.mobile-chat-toggle-table:active {
+  transform: scale(0.95);
+}
+
+/* Badge de notificaciones para mesa */
+.chat-notification-badge-table {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ef4444;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  border: 2px solid #0a1a0f;
+  animation: pulse 2s infinite;
+}
+
+/* Chat expandido para mesa */
+.mobile-chat-expanded-table {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70vh;
+  background: linear-gradient(180deg, rgba(16,65,39,.98), rgba(10,44,26,.98));
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  border: 2px solid rgba(84, 255, 138, 0.3);
+  border-bottom: none;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+  z-index: 1002;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Header del chat para mesa */
+.mobile-chat-header-table {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.mobile-chat-header-table h3 {
+  margin: 0;
+  color: #eaf5ea;
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+/* Botón cerrar para mesa */
+.mobile-chat-close-table {
+  background: none;
+  border: none;
+  color: #eaf5ea;
+  font-size: 24px;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.mobile-chat-close-table:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Contenido del chat para mesa */
+.mobile-chat-content-table {
+  flex: 1;
+  overflow: hidden;
+  padding: 0;
+}
+
+
+
+/* Ajustes para móviles pequeños en mesa */
+@media (max-width: 480px) {
+  .mobile-chat-toggle-table {
+    bottom: var(--spacing-sm);
+    right: var(--spacing-sm);
+    width: 50px;
+    height: 50px;
+    font-size: 18px;
+  }
+
+  .mobile-chat-expanded-table {
+    height: 75vh;
+  }
+
+  .mobile-chat-header-table {
+    padding: var(--spacing-sm);
+  }
+
+  .mobile-chat-header-table h3 {
+    font-size: var(--text-base);
+  }
+}
