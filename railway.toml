@@ -2,7 +2,7 @@
 command = "npm run build:railway"
 
 [deploy]
-startCommand = "node server/dist/index.js"
+startCommand = "npm start"
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
@@ -11,5 +11,6 @@ restartPolicyMaxRetries = 10
 [environments.production.variables]
 NODE_ENV = "production"
 PORT = "$PORT"
+HOST = "0.0.0.0"
 NPM_CONFIG_CACHE = "/tmp/.npm"
 NODE_OPTIONS = "--max-old-space-size=4096"
