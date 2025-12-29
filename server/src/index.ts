@@ -34,8 +34,8 @@ app.use(cors())
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-// Ruta al frontend build
-const clientDistPath = join(__dirname, '../../client/dist')
+// Ruta al frontend build (desde server/dist/server/src/ hasta client/dist/)
+const clientDistPath = join(__dirname, '../../../../client/dist')
 
 // Servir frontend estático si existe (producción)
 if (existsSync(clientDistPath)) {
