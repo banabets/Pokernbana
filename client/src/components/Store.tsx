@@ -44,23 +44,19 @@ export default function Store({
   setSubscription
 }: StoreProps) {
   const [selectedCategory, setSelectedCategory] = useState('themes')
+  const isMobile = window.innerWidth <= 768
 
   // Productos expandidos con más categorías
   const products: Product[] = [
-    // Table Skins - Expanded Collection
-    // Classic Colors
+    // Table Skins
     { id: 'green-felt', name: 'Green Felt', description: 'Classic casino green', price: 0, icon: '🎲', preview: '🟢', category: 'skins', rarity: 'common', owned: skin === 'green' },
     { id: 'blue-felt', name: 'Blue Felt', description: 'Elegant blue velvet', price: 100, icon: '💎', preview: '🔵', category: 'skins', rarity: 'rare', owned: skin === 'blue' },
     { id: 'purple-felt', name: 'Purple Felt', description: 'Royal purple luxury', price: 200, icon: '👑', preview: '🟣', category: 'skins', rarity: 'epic', owned: skin === 'purple' },
     { id: 'red-felt', name: 'Red Felt', description: 'Bold crimson passion', price: 150, icon: '❤️', preview: '🔴', category: 'skins', rarity: 'rare', owned: skin === 'red' },
     { id: 'black-felt', name: 'Black Felt', description: 'Mysterious midnight', price: 250, icon: '🌙', preview: '⚫', category: 'skins', rarity: 'epic', owned: skin === 'black' },
-
-    // Premium Colors
     { id: 'gold-felt', name: 'Gold Felt', description: 'Premium gold edition', price: 500, icon: '🥇', preview: '🟡', category: 'skins', rarity: 'legendary', owned: skin === 'gold' },
     { id: 'crystal-felt', name: 'Crystal Felt', description: 'Diamond crystal shine', price: 800, icon: '💎', preview: '✨', category: 'skins', rarity: 'legendary', owned: skin === 'crystal' },
     { id: 'rainbow-felt', name: 'Rainbow Felt', description: 'Colorful spectrum', price: 600, icon: '🌈', preview: '🎨', category: 'skins', rarity: 'legendary', owned: skin === 'rainbow' },
-
-    // Themed Colors
     { id: 'neon-felt', name: 'Neon Felt', description: 'Electric cyber glow', price: 300, icon: '⚡', preview: '🌈', category: 'skins', rarity: 'epic', owned: skin === 'neon' },
     { id: 'sunset-felt', name: 'Sunset Felt', description: 'Golden hour warmth', price: 350, icon: '🌅', preview: '🧡', category: 'skins', rarity: 'epic', owned: skin === 'sunset' },
     { id: 'ocean-felt', name: 'Ocean Felt', description: 'Deep sea mystery', price: 400, icon: '🌊', preview: '💙', category: 'skins', rarity: 'epic', owned: skin === 'ocean' },
@@ -68,8 +64,6 @@ export default function Store({
     { id: 'ice-felt', name: 'Ice Felt', description: 'Arctic frost', price: 380, icon: '🧊', preview: '❄️', category: 'skins', rarity: 'epic', owned: skin === 'ice' },
     { id: 'forest-felt', name: 'Forest Felt', description: 'Natural woodland', price: 320, icon: '🌲', preview: '🟢', category: 'skins', rarity: 'rare', owned: skin === 'forest' },
     { id: 'royal-felt', name: 'Royal Felt', description: 'Imperial majesty', price: 700, icon: '👑', preview: '💜', category: 'skins', rarity: 'legendary', owned: skin === 'royal' },
-
-    // Special Edition
     { id: 'galaxy-felt', name: 'Galaxy Felt', description: 'Cosmic starfield', price: 900, icon: '🌌', preview: '✨', category: 'skins', rarity: 'legendary' },
     { id: 'diamond-felt', name: 'Diamond Felt', description: 'Ultimate luxury', price: 1200, icon: '💎', preview: '💎', category: 'skins', rarity: 'legendary' },
     { id: 'platinum-felt', name: 'Platinum Felt', description: 'Pure elegance', price: 1000, icon: '⚪', preview: '🤍', category: 'skins', rarity: 'legendary' },
@@ -87,7 +81,7 @@ export default function Store({
     { id: 'fire-theme', name: 'Fire Storm', description: 'Burning hot effects', price: 400, icon: '🔥', preview: '🌋', category: 'themes', rarity: 'epic', owned: theme === 'fire' },
     { id: 'ocean-theme', name: 'Ocean Deep', description: 'Underwater mystery', price: 350, icon: '🌊', preview: '🐠', category: 'themes', rarity: 'rare', owned: theme === 'ocean' },
 
-    // Avatars - Unique GIF Collection
+    // Avatars
     { id: 'avatar-king', name: 'Poker King', description: 'Rule the tables', price: 300, icon: '👑', preview: 'https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHBzZHppcGN1a2E1cmpiZHM3eXRpcm9ldzBxZWNlb2p1d3ljZnEwdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5rIswVA3x6xw0jEuKh/giphy.gif', category: 'avatars', rarity: 'epic' },
     { id: 'avatar-queen', name: 'Poker Queen', description: 'Elegant and fierce', price: 250, icon: '👸', preview: 'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZmhwbTZrZDdzdnpvODd5MHE3OXI5MWttdjJrODcwYm5odXpnMDR5ayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LdzhWzAObvhtWAMSfj/giphy.gif', category: 'avatars', rarity: 'rare' },
     { id: 'avatar-joker', name: 'Joker Wild', description: 'Chaos and fun', price: 400, icon: '🃏', preview: 'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWpjZjhla2l5OXh4ZXF0dWs1ZTg1aXFqNzZkOTRtNTVxcTdwcjBodSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/yOt4iUfeWtk88/giphy.gif', category: 'avatars', rarity: 'epic' },
@@ -115,13 +109,12 @@ export default function Store({
   const categories = [
     { id: 'subscriptions', name: 'Premium', icon: '💎', count: 4 },
     { id: 'themes', name: 'Themes', icon: '🎨', count: products.filter(p => p.category === 'themes').length },
-    { id: 'skins', name: 'Table Skins', icon: '🎲', count: products.filter(p => p.category === 'skins').length },
+    { id: 'skins', name: 'Skins', icon: '🎲', count: products.filter(p => p.category === 'skins').length },
     { id: 'avatars', name: 'Avatars', icon: '👤', count: products.filter(p => p.category === 'avatars').length },
     { id: 'effects', name: 'Effects', icon: '✨', count: products.filter(p => p.category === 'effects').length },
     { id: 'boosters', name: 'Boosters', icon: '⚡', count: products.filter(p => p.category === 'boosters').length }
   ]
 
-  // Información de subscripciones premium
   const subscriptionPlans = [
     {
       level: 'free' as SubscriptionLevel,
@@ -129,12 +122,7 @@ export default function Store({
       price: '$0',
       color: 'rgba(150, 150, 150, 0.8)',
       icon: '🆓',
-      benefits: [
-        'Basic game access',
-        '5 simultaneous tables',
-        'Basic themes',
-        'Lobby advertisements'
-      ],
+      benefits: ['Basic game access', '5 simultaneous tables', 'Basic themes', 'Lobby advertisements'],
       monthlyCredits: 0,
       freeItems: 0,
       discount: '0%'
@@ -145,14 +133,7 @@ export default function Store({
       price: '$5/month',
       color: 'rgba(205, 127, 50, 0.8)',
       icon: '🥉',
-      benefits: [
-        '+50 Store Credits monthly',
-        '1 Free rare item per month',
-        'No lobby advertisements',
-        'Special profile badge',
-        'Premium chat access',
-        '10% discount on rare items'
-      ],
+      benefits: ['+50 Store Credits monthly', '1 Free rare item per month', 'No lobby advertisements', 'Special profile badge', 'Premium chat access', '10% discount on rare items'],
       monthlyCredits: 50,
       freeItems: 1,
       discount: '10%'
@@ -163,15 +144,7 @@ export default function Store({
       price: '$10/month',
       color: 'rgba(192, 192, 192, 0.8)',
       icon: '🥈',
-      benefits: [
-        '+100 Store Credits monthly',
-        '2 Free rare items per month',
-        'Early access to themes',
-        'Advanced statistics',
-        'Notification customization',
-        '20% discount on epic items',
-        'Priority support'
-      ],
+      benefits: ['+100 Store Credits monthly', '2 Free rare items per month', 'Early access to themes', 'Advanced statistics', 'Notification customization', '20% discount on epic items', 'Priority support'],
       monthlyCredits: 100,
       freeItems: 2,
       discount: '20%'
@@ -182,16 +155,7 @@ export default function Store({
       price: '$20/month',
       color: 'rgba(255, 215, 0, 0.8)',
       icon: '🥇',
-      benefits: [
-        '+200 Store Credits monthly',
-        '3 Free epic items per month',
-        'All premium themes',
-        'Tournament spectator mode',
-        'Global statistics',
-        '30% discount on all items',
-        'VIP chat with Gold members',
-        'Exclusive invitations'
-      ],
+      benefits: ['+200 Store Credits monthly', '3 Free epic items per month', 'All premium themes', 'Tournament spectator mode', 'Global statistics', '30% discount on all items', 'VIP chat with Gold members', 'Exclusive invitations'],
       monthlyCredits: 200,
       freeItems: 3,
       discount: '30%'
@@ -202,25 +166,14 @@ export default function Store({
       price: '$50/month',
       color: 'rgba(185, 242, 255, 0.8)',
       icon: '💎',
-      benefits: [
-        'Unlimited Store Credits',
-        'ALL items unlocked',
-        'Full profile customization',
-        'Custom name on tables',
-        'Beta features access',
-        '24/7 chat support',
-        'VIP event invitations',
-        'Unlimited private tables',
-        'Advanced global statistics'
-      ],
-      monthlyCredits: 9999, // Ilimitado
-      freeItems: 99, // Ilimitado
+      benefits: ['Unlimited Store Credits', 'ALL items unlocked', 'Full profile customization', 'Custom name on tables', 'Beta features access', '24/7 chat support', 'VIP event invitations', 'Unlimited private tables', 'Advanced global statistics'],
+      monthlyCredits: 9999,
+      freeItems: 99,
       discount: '50%'
     }
   ]
 
   const buyProduct = (product: Product) => {
-    // Aplicar descuentos basados en subscripción
     let discountedPrice = product.price
     if (subscription === 'bronze' && product.rarity === 'rare') discountedPrice = Math.floor(product.price * 0.9)
     if (subscription === 'silver' && product.rarity === 'epic') discountedPrice = Math.floor(product.price * 0.8)
@@ -231,7 +184,6 @@ export default function Store({
       setStoreCredits(prev => prev - discountedPrice)
       addNotification(`🎉 Purchased ${product.name}!`)
 
-      // Handle different product types
       if (product.category === 'skins') {
         setSkin(product.id.replace('-felt', '') as any)
       } else if (product.category === 'themes') {
@@ -243,37 +195,56 @@ export default function Store({
   }
 
   const subscribeToPlan = (plan: typeof subscriptionPlans[0]) => {
-    // Aquí iría la lógica de pago real
     if (plan.level === 'free') {
       setSubscription('free')
       addNotification('✅ Switched to Free plan')
     } else {
-      // Simular compra exitosa
       setSubscription(plan.level)
       addNotification(`🎉 Subscribed to ${plan.name} plan!`)
     }
 
-    // Enviar actualización al servidor
     if (socket && socket.connected) {
       socket.emit(ClientEvents.UPDATE_SUBSCRIPTION, plan.level)
       console.log('💎 CLIENT: Subscription updated to:', plan.level)
     }
 
-    // Guardar en localStorage para persistencia
     localStorage.setItem('userSubscription', plan.level)
   }
 
   const getRarityColor = (rarity: string) => {
     switch (rarity) {
-      case 'common': return 'rgba(150, 150, 150, 0.8)'
-      case 'rare': return 'rgba(0, 150, 255, 0.8)'
-      case 'epic': return 'rgba(150, 0, 255, 0.8)'
-      case 'legendary': return 'rgba(255, 150, 0, 0.8)'
-      default: return 'rgba(150, 150, 150, 0.8)'
+      case 'common': return 'rgba(150, 150, 150, 0.9)'
+      case 'rare': return 'rgba(0, 150, 255, 0.9)'
+      case 'epic': return 'rgba(150, 0, 255, 0.9)'
+      case 'legendary': return 'rgba(255, 150, 0, 0.9)'
+      default: return 'rgba(150, 150, 150, 0.9)'
     }
   }
 
+  const getDiscountedPrice = (product: Product) => {
+    let discountedPrice = product.price
+    let discountPercent = 0
+
+    if (subscription === 'bronze' && product.rarity === 'rare') {
+      discountedPrice = Math.floor(product.price * 0.9)
+      discountPercent = 10
+    } else if (subscription === 'silver' && product.rarity === 'epic') {
+      discountedPrice = Math.floor(product.price * 0.8)
+      discountPercent = 20
+    } else if (subscription === 'gold') {
+      discountedPrice = Math.floor(product.price * 0.7)
+      discountPercent = 30
+    } else if (subscription === 'diamond') {
+      discountedPrice = Math.floor(product.price * 0.5)
+      discountPercent = 50
+    }
+
+    return { discountedPrice, discountPercent }
+  }
+
   if (!openStore) return null
+
+  const currentPlan = subscriptionPlans.find(p => p.level === subscription)
 
   return (
     <div
@@ -290,252 +261,159 @@ export default function Store({
         onWheel={(e) => e.stopPropagation()}
         onTouchMove={(e) => e.stopPropagation()}
         style={{
-          background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.85), rgba(20, 20, 20, 0.9))',
-          border: '2px solid rgba(255, 255, 255, 0.1)',
-          borderRadius: '20px',
-          maxWidth: '900px',
+          background: 'linear-gradient(135deg, rgba(10, 10, 20, 0.95), rgba(20, 15, 30, 0.98))',
+          border: '2px solid rgba(255, 215, 0, 0.2)',
+          borderRadius: '24px',
+          maxWidth: isMobile ? '95%' : '1100px',
           width: '95%',
-          maxHeight: window.innerWidth <= 768 ? '75vh' : '80vh',
+          maxHeight: isMobile ? '90vh' : '85vh',
           overflow: 'hidden',
-          backdropFilter: 'blur(15px)',
-          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 255, 255, 0.05)',
-          animation: 'storeEntrance 0.5s ease-out',
+          backdropFilter: 'blur(20px)',
+          boxShadow: '0 25px 70px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.1)',
           position: 'relative',
-          overscrollBehavior: 'contain',
-          touchAction: 'pan-y'
+          display: 'flex',
+          flexDirection: 'column'
         }}
       >
-        {/* Botón de cerrar en esquina superior derecha */}
-        <button
-          onClick={() => setOpenStore(false)}
-          style={{
-            position: 'absolute',
-            top: window.innerWidth <= 768 ? '8px' : '12px',
-            right: window.innerWidth <= 768 ? '12px' : '16px',
-            background: 'rgba(255, 255, 255, 0.1)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            color: 'rgba(255, 255, 255, 0.8)',
-            fontSize: window.innerWidth <= 768 ? 18 : 20,
-            fontWeight: 600,
-            cursor: 'pointer',
-            padding: window.innerWidth <= 768 ? '6px 10px' : '8px 12px',
-            borderRadius: '12px',
-            transition: 'all 0.3s ease',
-            backdropFilter: 'blur(8px)',
-            zIndex: 10
-          }}
-          onMouseEnter={(e) => {
-            (e.target as HTMLElement).style.backgroundColor = 'rgba(255, 255, 255, 0.2)'
-            ;(e.target as HTMLElement).style.transform = 'scale(1.05)'
-          }}
-          onMouseLeave={(e) => {
-            (e.target as HTMLElement).style.backgroundColor = 'rgba(255, 255, 255, 0.1)'
-            ;(e.target as HTMLElement).style.transform = 'scale(1)'
-          }}
-        >
-          ✕
-        </button>
-
-        {/* Header */}
+        {/* Header Section */}
         <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: window.innerWidth <= 768 ? '16px 16px 12px 16px' : '20px 32px 16px 32px',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-          background: 'rgba(255, 255, 255, 0.02)',
-          minHeight: window.innerWidth <= 768 ? 'auto' : '80px'
+          padding: isMobile ? '16px' : '24px 32px',
+          borderBottom: '2px solid rgba(255, 215, 0, 0.15)',
+          background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(255, 107, 53, 0.05))',
+          position: 'relative'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: window.innerWidth <= 768 ? '12px' : '20px' }}>
+          {/* Close Button */}
+          <button
+            onClick={() => setOpenStore(false)}
+            style={{
+              position: 'absolute',
+              top: isMobile ? '12px' : '20px',
+              right: isMobile ? '12px' : '24px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              color: '#ffffff',
+              fontSize: isMobile ? 20 : 24,
+              fontWeight: 600,
+              cursor: 'pointer',
+              width: isMobile ? '32px' : '40px',
+              height: isMobile ? '32px' : '40px',
+              borderRadius: '12px',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 10
+            }}
+            onMouseEnter={(e) => {
+              (e.target as HTMLElement).style.background = 'rgba(255, 100, 100, 0.3)'
+              ;(e.target as HTMLElement).style.transform = 'rotate(90deg) scale(1.1)'
+            }}
+            onMouseLeave={(e) => {
+              (e.target as HTMLElement).style.background = 'rgba(255, 255, 255, 0.1)'
+              ;(e.target as HTMLElement).style.transform = 'rotate(0deg) scale(1)'
+            }}
+          >
+            ✕
+          </button>
+
+          {/* Title and Credits */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: isMobile ? 'flex-start' : 'center',
+            gap: '16px',
+            flexWrap: isMobile ? 'wrap' : 'nowrap'
+          }}>
             <div>
               <h1 style={{
                 margin: 0,
-                fontSize: window.innerWidth <= 768 ? 20 : 28,
-                fontWeight: 800,
-                color: '#ffffff',
-                textShadow: '0 2px 4px rgba(0,0,0,0.5)',
-                letterSpacing: '0.5px',
-                lineHeight: '1.2'
+                fontSize: isMobile ? 24 : 32,
+                fontWeight: 900,
+                background: 'linear-gradient(135deg, #ffd700, #ffed4e)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                letterSpacing: '1px',
+                marginBottom: '8px'
               }}>
                 🛒 Store
               </h1>
+              {!isMobile && (
+                <p style={{
+                  margin: 0,
+                  fontSize: 14,
+                  color: 'rgba(255, 255, 255, 0.6)',
+                  fontWeight: 500
+                }}>
+                  Customize your poker experience
+                </p>
+              )}
             </div>
 
-            {/* Credits y Plan en una línea para móvil */}
-            {window.innerWidth <= 768 ? (
+            {/* Credits Display */}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-end',
+              gap: '8px',
+              background: 'rgba(255, 215, 0, 0.1)',
+              border: '1px solid rgba(255, 215, 0, 0.3)',
+              borderRadius: '16px',
+              padding: isMobile ? '10px 14px' : '14px 20px',
+              minWidth: isMobile ? '140px' : '180px'
+            }}>
               <div style={{
                 display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                gap: '2px'
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: isMobile ? 18 : 22,
+                fontWeight: 800,
+                color: '#ffd700'
               }}>
-                <div style={{
-                  fontSize: '12px',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  fontWeight: 600,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}>
-                  <span>💎</span>
-                  {storeCredits.toLocaleString()}
-                  <span>💎</span>
-                </div>
-                <div style={{
-                  fontSize: '10px',
-                  color: 'rgba(255, 255, 255, 0.6)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '3px'
-                }}>
-                  <span style={{
-                    color: subscriptionPlans.find(p => p.level === subscription)?.color || 'rgba(150, 150, 150, 0.8)',
-                    fontSize: '11px'
-                  }}>
-                    {subscriptionPlans.find(p => p.level === subscription)?.icon || '🆓'}
-                  </span>
-                  <span>
-                    {subscriptionPlans.find(p => p.level === subscription)?.name || 'FREE'}
-                    {subscription !== 'free' && ` (${subscriptionPlans.find(p => p.level === subscription)?.discount}%)`}
-                  </span>
-                </div>
+                <span>💎</span>
+                <span>{storeCredits.toLocaleString()}</span>
               </div>
-            ) : (
-              <div>
-                <div style={{
-                  fontSize: 14,
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  marginTop: 2,
-                  fontWeight: 500,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}>
-                  <span>💎</span>
-                  {storeCredits.toLocaleString()} Credits
-                  <span>💎</span>
-                </div>
-
-                {/* Subscription Info */}
-                <div style={{
-                  fontSize: 12,
-                  color: 'rgba(255, 255, 255, 0.6)',
-                  marginTop: 4,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontSize: isMobile ? 11 : 12,
+                color: 'rgba(255, 255, 255, 0.7)'
+              }}>
+                <span style={{ fontSize: isMobile ? 14 : 16 }}>
+                  {currentPlan?.icon}
+                </span>
+                <span style={{ fontWeight: 600 }}>
+                  {currentPlan?.name}
+                </span>
+                {subscription !== 'free' && (
                   <span style={{
-                    color: subscriptionPlans.find(p => p.level === subscription)?.color || 'rgba(150, 150, 150, 0.8)',
-                    fontSize: '14px'
+                    background: 'rgba(255, 215, 0, 0.2)',
+                    padding: '2px 6px',
+                    borderRadius: '6px',
+                    fontSize: 10,
+                    fontWeight: 700
                   }}>
-                    {subscriptionPlans.find(p => p.level === subscription)?.icon || '🆓'}
+                    {currentPlan?.discount} OFF
                   </span>
-                  <span>
-                    {subscriptionPlans.find(p => p.level === subscription)?.name || 'FREE'} Plan
-                    {subscription !== 'free' && ` (${subscriptionPlans.find(p => p.level === subscription)?.discount} discount)`}
-                  </span>
-                </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </div>
 
         {/* Category Tabs */}
-        {window.innerWidth <= 768 ? (
-          // Diseño de cuadrícula para móvil
-          <div
-            style={{
-              padding: '12px 16px',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-              background: 'rgba(255, 255, 255, 0.02)',
-              overscrollBehavior: 'contain',
-              touchAction: 'pan-y'
-            }}
-            onWheel={(e) => e.stopPropagation()}
-            onTouchMove={(e) => e.stopPropagation()}
-          >
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '6px',
-              maxWidth: '300px',
-              margin: '0 auto'
-            }}>
-              {categories.map(category => (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  style={{
-                    background: selectedCategory === category.id
-                      ? 'rgba(255, 255, 255, 0.15)'
-                      : 'rgba(255, 255, 255, 0.08)',
-                    border: `1px solid ${selectedCategory === category.id ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.2)'}`,
-                    color: selectedCategory === category.id ? '#ffffff' : 'rgba(255, 255, 255, 0.7)',
-                    fontSize: '10px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    padding: '8px 4px',
-                    borderRadius: '10px',
-                    transition: 'all 0.3s ease',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '2px',
-                    minHeight: '50px',
-                    justifyContent: 'center',
-                    textAlign: 'center'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (selectedCategory !== category.id) {
-                      (e.target as HTMLElement).style.backgroundColor = 'rgba(255, 255, 255, 0.12)'
-                      ;(e.target as HTMLElement).style.transform = 'scale(1.05)'
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (selectedCategory !== category.id) {
-                      (e.target as HTMLElement).style.backgroundColor = 'rgba(255, 255, 255, 0.08)'
-                      ;(e.target as HTMLElement).style.transform = 'scale(1)'
-                    }
-                  }}
-                >
-                  <span style={{ fontSize: '16px', lineHeight: '1' }}>{category.icon}</span>
-                  <span style={{
-                    fontSize: '8px',
-                    lineHeight: '1',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    maxWidth: '100%'
-                  }}>
-                    {category.name}
-                  </span>
-                  <span style={{
-                    background: 'rgba(255, 215, 0, 0.3)',
-                    color: 'rgba(255, 255, 255, 0.9)',
-                    padding: '1px 3px',
-                    borderRadius: '4px',
-                    fontSize: '7px',
-                    fontWeight: 800,
-                    lineHeight: '1'
-                  }}>
-                    {category.count}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : (
-          // Diseño horizontal para desktop
+        <div style={{
+          padding: isMobile ? '12px' : '16px 32px',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          background: 'rgba(0, 0, 0, 0.2)',
+          overflowX: 'auto',
+          scrollbarWidth: 'thin'
+        }}>
           <div style={{
             display: 'flex',
-            gap: '8px',
-            padding: '16px 32px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-            overflowX: 'auto',
-            scrollbarWidth: 'thin',
-            scrollbarColor: 'rgba(255, 215, 0, 0.3) transparent',
-            scrollBehavior: 'smooth'
+            gap: isMobile ? '8px' : '12px',
+            minWidth: 'max-content'
           }}>
             {categories.map(category => (
               <button
@@ -543,161 +421,152 @@ export default function Store({
                 onClick={() => setSelectedCategory(category.id)}
                 style={{
                   background: selectedCategory === category.id
-                    ? 'rgba(255, 255, 255, 0.1)'
+                    ? 'linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 107, 53, 0.2))'
                     : 'rgba(255, 255, 255, 0.05)',
-                  border: `1px solid ${selectedCategory === category.id ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.1)'}`,
-                  color: selectedCategory === category.id ? '#ffffff' : 'rgba(255, 255, 255, 0.6)',
-                  fontSize: 13,
-                  fontWeight: 600,
+                  border: `2px solid ${selectedCategory === category.id ? 'rgba(255, 215, 0, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
+                  color: selectedCategory === category.id ? '#ffd700' : 'rgba(255, 255, 255, 0.7)',
+                  fontSize: isMobile ? 12 : 14,
+                  fontWeight: 700,
                   cursor: 'pointer',
-                  padding: '10px 16px',
+                  padding: isMobile ? '10px 14px' : '12px 20px',
                   borderRadius: '12px',
-                  transition: 'all 0.3s ease',
+                  transition: 'all 0.2s ease',
                   whiteSpace: 'nowrap',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  minWidth: '100px',
-                  justifyContent: 'center',
-                  flexShrink: 0
+                  gap: '8px',
+                  flexShrink: 0,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
                 }}
                 onMouseEnter={(e) => {
                   if (selectedCategory !== category.id) {
-                    (e.target as HTMLElement).style.backgroundColor = 'rgba(255, 255, 255, 0.1)'
+                    (e.target as HTMLElement).style.background = 'rgba(255, 255, 255, 0.1)'
                     ;(e.target as HTMLElement).style.transform = 'translateY(-2px)'
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (selectedCategory !== category.id) {
-                    (e.target as HTMLElement).style.backgroundColor = 'rgba(255, 255, 255, 0.05)'
+                    (e.target as HTMLElement).style.background = 'rgba(255, 255, 255, 0.05)'
                     ;(e.target as HTMLElement).style.transform = 'translateY(0)'
                   }
                 }}
               >
-                <span style={{ fontSize: '18px' }}>{category.icon}</span>
+                <span style={{ fontSize: isMobile ? 16 : 18 }}>{category.icon}</span>
                 <span>{category.name}</span>
                 <span style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  color: 'rgba(255, 255, 255, 0.8)',
+                  background: 'rgba(255, 215, 0, 0.2)',
+                  color: '#ffd700',
                   padding: '2px 6px',
                   borderRadius: '8px',
-                  fontSize: '10px',
-                  fontWeight: 700
+                  fontSize: isMobile ? 9 : 10,
+                  fontWeight: 800,
+                  minWidth: '20px',
+                  textAlign: 'center'
                 }}>
                   {category.count}
                 </span>
               </button>
             ))}
           </div>
-        )}
+        </div>
 
         {/* Products Grid */}
-        <div
-          style={{
-            padding: window.innerWidth <= 768 ? '16px 16px' : '24px 32px',
-            maxHeight: window.innerWidth <= 768 ? '420px' : '400px',
-            overflowY: 'auto',
-            scrollbarWidth: 'thin',
-            scrollbarColor: 'rgba(255, 215, 0, 0.3) transparent',
-            scrollBehavior: 'smooth',
-            WebkitOverflowScrolling: 'touch',
-            overscrollBehavior: 'contain',
-            touchAction: 'pan-y'
-          }}
-          onWheel={(e) => e.stopPropagation()}
-          onTouchMove={(e) => e.stopPropagation()}
-        >
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: selectedCategory === 'subscriptions'
-              ? 'repeat(auto-fit, minmax(280px, 1fr))'
-              : window.innerWidth <= 768
-                ? 'repeat(auto-fill, minmax(140px, 1fr))'
-                : 'repeat(auto-fill, minmax(180px, 1fr))',
-            gap: window.innerWidth <= 768 ? '12px' : '16px',
-            animation: 'fadeInGrid 0.5s ease-out'
-          }}>
-            {
-              selectedCategory === 'subscriptions' ? (
-                subscriptionPlans.map(plan => (
+        <div style={{
+          flex: 1,
+          padding: isMobile ? '16px' : '24px 32px',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'rgba(255, 215, 0, 0.3) transparent'
+        }}>
+          {selectedCategory === 'subscriptions' ? (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '20px'
+            }}>
+              {subscriptionPlans.map(plan => {
+                const isActive = subscription === plan.level
+                return (
                   <div
                     key={plan.level}
+                    onClick={() => subscribeToPlan(plan)}
                     style={{
-                      background: subscription === plan.level
-                        ? 'rgba(50, 200, 100, 0.1)'
-                        : 'rgba(255, 255, 255, 0.03)',
-                      border: `2px solid ${subscription === plan.level ? 'rgba(50, 200, 100, 0.3)' : plan.color}`,
-                      borderRadius: '16px',
-                      padding: '20px',
+                      background: isActive
+                        ? 'linear-gradient(135deg, rgba(50, 200, 100, 0.15), rgba(50, 200, 100, 0.05))'
+                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02))',
+                      border: `2px solid ${isActive ? 'rgba(50, 200, 100, 0.5)' : plan.color}`,
+                      borderRadius: '20px',
+                      padding: '24px',
                       cursor: 'pointer',
                       transition: 'all 0.3s ease',
                       position: 'relative',
-                      overflow: 'hidden',
-                      backdropFilter: 'blur(5px)',
-                      minHeight: '300px',
-                      display: 'flex',
-                      flexDirection: 'column'
+                      overflow: 'hidden'
                     }}
-                    onClick={() => subscribeToPlan(plan)}
                     onMouseEnter={(e) => {
                       (e.target as HTMLElement).style.transform = 'translateY(-4px)'
-                      ;(e.target as HTMLElement).style.boxShadow = '0 12px 30px rgba(255, 215, 0, 0.4)'
+                      ;(e.target as HTMLElement).style.boxShadow = `0 15px 40px ${plan.color}40`
                     }}
                     onMouseLeave={(e) => {
                       (e.target as HTMLElement).style.transform = 'translateY(0)'
-                      ;(e.target as HTMLElement).style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.3)'
+                      ;(e.target as HTMLElement).style.boxShadow = 'none'
                     }}
                   >
-                    {/* Current Plan Badge */}
-                    {subscription === plan.level && (
+                    {isActive && (
                       <div style={{
                         position: 'absolute',
-                        top: '12px',
-                        right: '12px',
+                        top: '16px',
+                        right: '16px',
                         background: 'rgba(50, 200, 100, 0.9)',
                         color: '#ffffff',
-                        padding: '4px 12px',
-                        borderRadius: '12px',
-                        fontSize: '11px',
+                        padding: '6px 14px',
+                        borderRadius: '20px',
+                        fontSize: 11,
                         fontWeight: 800,
-                        textTransform: 'uppercase'
+                        textTransform: 'uppercase',
+                        letterSpacing: '1px'
                       }}>
-                        ACTIVE
+                        ✓ Active
                       </div>
                     )}
 
-                    {/* Plan Header */}
-                    <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-                      <div style={{ fontSize: '48px', marginBottom: '8px' }}>{plan.icon}</div>
+                    <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                      <div style={{ fontSize: '56px', marginBottom: '12px' }}>{plan.icon}</div>
                       <h3 style={{
-                        margin: '0 0 4px 0',
-                        fontSize: '24px',
+                        margin: '0 0 8px 0',
+                        fontSize: '28px',
                         fontWeight: 900,
                         color: '#ffffff',
-                        textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                        textShadow: '0 2px 8px rgba(0,0,0,0.5)'
                       }}>
                         {plan.name}
                       </h3>
                       <div style={{
-                        fontSize: '20px',
+                        fontSize: '24px',
                         fontWeight: 800,
                         color: plan.color,
-                        textShadow: '0 0 8px rgba(255, 255, 255, 0.3)'
+                        textShadow: `0 0 12px ${plan.color}`
                       }}>
                         {plan.price}
                       </div>
                     </div>
 
-                    {/* Monthly Benefits */}
-                    <div style={{ marginBottom: '16px' }}>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      marginBottom: '20px'
+                    }}>
                       <div style={{
                         display: 'flex',
                         alignItems: 'center',
+                        justifyContent: 'center',
                         gap: '8px',
-                        marginBottom: '8px',
-                        fontSize: '14px',
+                        marginBottom: '12px',
+                        fontSize: 16,
                         fontWeight: 700,
-                        color: 'rgba(255, 255, 255, 0.9)'
+                        color: '#ffd700'
                       }}>
                         <span>💎</span>
                         <span>+{plan.monthlyCredits === 9999 ? '∞' : plan.monthlyCredits} Credits/month</span>
@@ -706,11 +575,12 @@ export default function Store({
                         <div style={{
                           display: 'flex',
                           alignItems: 'center',
+                          justifyContent: 'center',
                           gap: '8px',
-                          marginBottom: '8px',
-                          fontSize: '14px',
+                          marginBottom: '12px',
+                          fontSize: 16,
                           fontWeight: 700,
-                          color: 'rgba(255, 255, 255, 0.9)'
+                          color: '#ffd700'
                         }}>
                           <span>🎁</span>
                           <span>{plan.freeItems === 99 ? '∞' : plan.freeItems} Free items/month</span>
@@ -719,316 +589,300 @@ export default function Store({
                       <div style={{
                         display: 'flex',
                         alignItems: 'center',
+                        justifyContent: 'center',
                         gap: '8px',
-                        fontSize: '14px',
+                        fontSize: 16,
                         fontWeight: 700,
                         color: plan.color
                       }}>
                         <span>💰</span>
-                        <span>{plan.discount} discount</span>
+                        <span>{plan.discount} discount on all items</span>
                       </div>
                     </div>
 
-                    {/* Benefits List */}
-                    <div style={{ flex: 1 }}>
+                    <div style={{ marginBottom: '20px' }}>
                       {plan.benefits.map((benefit, index) => (
                         <div
                           key={index}
                           style={{
                             display: 'flex',
                             alignItems: 'flex-start',
-                            gap: '8px',
-                            marginBottom: '6px',
-                            fontSize: '12px',
-                            color: 'rgba(200, 200, 200, 0.9)',
-                            lineHeight: '1.4'
+                            gap: '10px',
+                            marginBottom: '8px',
+                            fontSize: 13,
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            lineHeight: '1.5'
                           }}
                         >
-                          <span style={{ color: plan.color, fontSize: '10px', marginTop: '2px' }}>✓</span>
+                          <span style={{ color: plan.color, fontSize: 16, marginTop: '2px' }}>✓</span>
                           <span>{benefit}</span>
                         </div>
                       ))}
                     </div>
 
-                    {/* Subscribe Button */}
                     <button
-                      disabled={subscription === plan.level}
+                      disabled={isActive}
                       style={{
-                        background: subscription === plan.level
+                        background: isActive
                           ? 'rgba(50, 200, 100, 0.2)'
-                          : plan.level === 'free' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.1)',
-                        border: `1px solid ${subscription === plan.level ? 'rgba(50, 200, 100, 0.3)' : 'rgba(255, 255, 255, 0.3)'}`,
-                        color: subscription === plan.level ? 'rgba(80, 255, 80, 0.8)' : 'rgba(255, 255, 255, 0.9)',
-                        fontSize: '14px',
+                          : 'linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 107, 53, 0.2))',
+                        border: `2px solid ${isActive ? 'rgba(50, 200, 100, 0.5)' : 'rgba(255, 215, 0, 0.5)'}`,
+                        color: isActive ? 'rgba(80, 255, 80, 0.8)' : '#ffd700',
+                        fontSize: 14,
                         fontWeight: 800,
-                        padding: '12px 20px',
+                        padding: '14px 24px',
                         borderRadius: '12px',
-                        cursor: subscription === plan.level ? 'default' : 'pointer',
+                        cursor: isActive ? 'default' : 'pointer',
                         transition: 'all 0.3s ease',
                         width: '100%',
                         textTransform: 'uppercase',
-                        letterSpacing: '1px',
-                        marginTop: '16px'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (subscription !== plan.level) {
-                          (e.target as HTMLElement).style.transform = 'scale(1.02)'
-                          ;(e.target as HTMLElement).style.boxShadow = '0 6px 20px rgba(255, 215, 0, 0.5)'
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (subscription !== plan.level) {
-                          (e.target as HTMLElement).style.transform = 'scale(1)'
-                          ;(e.target as HTMLElement).style.boxShadow = 'none'
-                        }
+                        letterSpacing: '1px'
                       }}
                     >
-                      {subscription === plan.level ? '✓ ACTIVE' : plan.level === 'free' ? 'CURRENT' : 'SUBSCRIBE'}
+                      {isActive ? '✓ Current Plan' : plan.level === 'free' ? 'Select' : 'Subscribe'}
                     </button>
                   </div>
-                ))
-              ) : (
-                products.filter(product => product.category === selectedCategory).map(product => (
-                <div
-                  key={product.id}
-                  style={{
-                    background: product.owned
-                      ? 'rgba(50, 200, 100, 0.1)'
-                      : 'rgba(255, 255, 255, 0.03)',
-                    border: `1px solid ${product.owned ? 'rgba(50, 200, 100, 0.3)' : 'rgba(255, 255, 255, 0.1)'} `,
-                    borderRadius: '12px',
-                    padding: window.innerWidth <= 768 ? '12px' : '16px',
-                    cursor: product.owned ? 'default' : 'pointer',
-                    transition: 'all 0.3s ease',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    backdropFilter: 'blur(5px)'
-                  }}
-                  onClick={() => !product.owned && buyProduct(product)}
-                  onMouseEnter={(e) => {
-                    if (!product.owned) {
-                      (e.target as HTMLElement).style.transform = 'translateY(-8px) scale(1.02)'
-                      ;(e.target as HTMLElement).style.boxShadow = '0 12px 30px rgba(255, 215, 0, 0.4)'
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!product.owned) {
-                      (e.target as HTMLElement).style.transform = 'translateY(0) scale(1)'
-                      ;(e.target as HTMLElement).style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.3)'
-                    }
-                  }}
-                >
-                  {/* Rarity Badge */}
-                  <div style={{
-                    position: 'absolute',
-                    top: '8px',
-                    right: '8px',
-                    background: getRarityColor(product.rarity),
-                    color: '#ffffff',
-                    padding: '2px 8px',
-                    borderRadius: '12px',
-                    fontSize: '10px',
-                    fontWeight: 800,
-                    textTransform: 'uppercase',
-                    boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)'
-                  }}>
-                    {product.rarity}
-                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile
+                ? 'repeat(auto-fill, minmax(140px, 1fr))'
+                : 'repeat(auto-fill, minmax(200px, 1fr))',
+              gap: isMobile ? '12px' : '20px'
+            }}>
+              {products.filter(product => product.category === selectedCategory).map(product => {
+                const { discountedPrice, discountPercent } = getDiscountedPrice(product)
+                const canAfford = storeCredits >= discountedPrice
 
-                  {/* Product Preview */}
-                  <div style={{
-                    textAlign: 'center',
-                    marginBottom: '12px',
-                    fontSize: window.innerWidth <= 768 ? '36px' : '48px',
-                    animation: 'bounce 2s ease-in-out infinite'
-                  }}>
-                    {product.preview.startsWith('http') ? (
-                      <img
-                        src={product.preview}
-                        alt={product.name}
-                        style={{
-                          width: window.innerWidth <= 768 ? '60px' : '80px',
-                          height: window.innerWidth <= 768 ? '60px' : '80px',
-                          borderRadius: '8px',
-                          objectFit: 'cover',
-                          border: '2px solid rgba(255, 255, 255, 0.3)'
-                        }}
-                      />
-                    ) : (
-                      product.preview
-                    )}
-                  </div>
-
-                  {/* Product Info */}
-                  <div style={{ textAlign: 'center' }}>
-                    <h3 style={{
-                      margin: '0 0 4px 0',
-                      fontSize: window.innerWidth <= 768 ? '14px' : '16px',
-                      fontWeight: 800,
-                      color: '#ffffff',
-                      textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)'
-                    }}>
-                      {product.icon} {product.name}
-                    </h3>
-
-                    <p style={{
-                      margin: '0 0 12px 0',
-                      fontSize: window.innerWidth <= 768 ? '11px' : '12px',
-                      color: 'rgba(200, 200, 200, 0.8)',
-                      lineHeight: '1.3'
-                    }}>
-                      {product.description}
-                    </p>
-
-                      {/* Price with discount */}
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '4px',
-                      marginBottom: '8px'
-                    }}>
-                        {product.price > 0 && (() => {
-                          let discountedPrice = product.price
-                          let discountPercent = 0
-
-                          if (subscription === 'bronze' && product.rarity === 'rare') {
-                            discountedPrice = Math.floor(product.price * 0.9)
-                            discountPercent = 10
-                          } else if (subscription === 'silver' && product.rarity === 'epic') {
-                            discountedPrice = Math.floor(product.price * 0.8)
-                            discountPercent = 20
-                          } else if (subscription === 'gold') {
-                            discountedPrice = Math.floor(product.price * 0.7)
-                            discountPercent = 30
-                          } else if (subscription === 'diamond') {
-                            discountedPrice = Math.floor(product.price * 0.5)
-                            discountPercent = 50
-                          }
-
-                          return (
-                            <>
-                              {discountPercent > 0 && (
-                                <span style={{
-                                  fontSize: '12px',
-                                  color: 'rgba(255, 150, 150, 0.8)',
-                                  textDecoration: 'line-through'
-                                }}>
-                                  {product.price} 💎
-                                </span>
-                              )}
-                      <span style={{
-                        fontSize: '16px',
-                        fontWeight: 800,
-                        color: product.price === 0 ? 'rgba(80, 255, 80, 0.8)' : 'rgba(255, 255, 255, 0.9)',
-                        textShadow: product.price === 0 ? 'none' : '0 0 4px rgba(255, 255, 255, 0.3)'
-                      }}>
-                                {product.price === 0 ? 'FREE' : `${discountedPrice} 💎`}
-                              </span>
-                              {discountPercent > 0 && (
-                                <span style={{
-                                  fontSize: '10px',
-                                  background: 'rgba(255, 100, 100, 0.8)',
-                                  color: 'white',
-                                  padding: '2px 4px',
-                                  borderRadius: '4px',
-                                  fontWeight: 800
-                                }}>
-                                  -{discountPercent}%
-                                </span>
-                              )}
-                            </>
-                          )
-                        })()}
-                        {product.price === 0 && (
-                          <span style={{
-                            fontSize: '16px',
-                            fontWeight: 800,
-                            color: 'rgba(80, 255, 80, 0.8)'
-                          }}>
-                            FREE
-                      </span>
-                        )}
-                    </div>
-
-                    {/* Buy Button */}
-                    {product.owned ? (
-                      <div style={{
-                        background: 'rgba(50, 200, 100, 0.1)',
-                        color: 'rgba(80, 255, 80, 0.8)',
-                        padding: '6px 12px',
-                        borderRadius: '8px',
-                        fontSize: '11px',
-                        fontWeight: 700,
-                        textAlign: 'center',
-                        border: '1px solid rgba(50, 200, 100, 0.3)'
-                      }}>
-                        ✓ OWNED
-                      </div>
-                    ) : (
-                      <button
-                        disabled={storeCredits < product.price}
-                        style={{
-                          background: storeCredits < product.price
-                            ? 'rgba(255, 100, 100, 0.1)'
-                            : 'rgba(255, 255, 255, 0.1)',
-                          border: `1px solid ${storeCredits < product.price ? 'rgba(255, 100, 100, 0.3)' : 'rgba(255, 255, 255, 0.3)'}`,
-                          color: storeCredits < product.price ? 'rgba(255, 150, 150, 0.7)' : 'rgba(255, 255, 255, 0.9)',
-                          fontSize: window.innerWidth <= 768 ? '11px' : '13px',
-                          fontWeight: 700,
-                          padding: window.innerWidth <= 768 ? '6px 12px' : '8px 16px',
-                          borderRadius: '8px',
-                          cursor: storeCredits < product.price ? 'not-allowed' : 'pointer',
-                          transition: 'all 0.3s ease',
-                          width: '100%',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.5px'
-                        }}
-                        onMouseEnter={(e) => {
-                          if (storeCredits >= product.price) {
-                            (e.target as HTMLElement).style.transform = 'scale(1.05)'
-                            ;(e.target as HTMLElement).style.boxShadow = '0 6px 20px rgba(255, 215, 0, 0.5)'
-                          }
-                        }}
-                        onMouseLeave={(e) => {
-                          if (storeCredits >= product.price) {
-                            (e.target as HTMLElement).style.transform = 'scale(1)'
-                            ;(e.target as HTMLElement).style.boxShadow = 'none'
-                          }
-                        }}
-                      >
-                        {storeCredits < product.price ? '❌ INSUFFICIENT' : '🛒 BUY NOW'}
-                      </button>
-                    )}
-
-                  {/* Hover effect overlay */}
-                  {!product.owned && (
-                    <div style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 53, 0.1))',
-                      opacity: 0,
-                      transition: 'opacity 0.3s ease',
-                      pointerEvents: 'none',
-                      borderRadius: '14px'
+                return (
+                  <div
+                    key={product.id}
+                    onClick={() => !product.owned && canAfford && buyProduct(product)}
+                    style={{
+                      background: product.owned
+                        ? 'linear-gradient(135deg, rgba(50, 200, 100, 0.15), rgba(50, 200, 100, 0.05))'
+                        : 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02))',
+                      border: `2px solid ${product.owned ? 'rgba(50, 200, 100, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
+                      borderRadius: '16px',
+                      padding: isMobile ? '14px' : '18px',
+                      cursor: product.owned ? 'default' : canAfford ? 'pointer' : 'not-allowed',
+                      transition: 'all 0.3s ease',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      opacity: product.owned ? 1 : canAfford ? 1 : 0.6
                     }}
                     onMouseEnter={(e) => {
-                      (e.target as HTMLElement).style.opacity = '1'
+                      if (!product.owned && canAfford) {
+                        (e.target as HTMLElement).style.transform = 'translateY(-6px) scale(1.02)'
+                        ;(e.target as HTMLElement).style.boxShadow = '0 15px 40px rgba(255, 215, 0, 0.4)'
+                        ;(e.target as HTMLElement).style.borderColor = 'rgba(255, 215, 0, 0.6)'
+                      }
                     }}
                     onMouseLeave={(e) => {
-                      (e.target as HTMLElement).style.opacity = '0'
+                      if (!product.owned && canAfford) {
+                        (e.target as HTMLElement).style.transform = 'translateY(0) scale(1)'
+                        ;(e.target as HTMLElement).style.boxShadow = 'none'
+                        ;(e.target as HTMLElement).style.borderColor = 'rgba(255, 255, 255, 0.1)'
+                      }
                     }}
-                    />
-                  )}
-                </div>
+                  >
+                    {/* Rarity Badge */}
+                    <div style={{
+                      position: 'absolute',
+                      top: '10px',
+                      right: '10px',
+                      background: getRarityColor(product.rarity),
+                      color: '#ffffff',
+                      padding: '4px 10px',
+                      borderRadius: '12px',
+                      fontSize: 9,
+                      fontWeight: 800,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)'
+                    }}>
+                      {product.rarity}
+                    </div>
+
+                    {/* Owned Badge */}
+                    {product.owned && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '10px',
+                        left: '10px',
+                        background: 'rgba(50, 200, 100, 0.9)',
+                        color: '#ffffff',
+                        padding: '4px 10px',
+                        borderRadius: '12px',
+                        fontSize: 9,
+                        fontWeight: 800,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px'
+                      }}>
+                        ✓ Owned
+                      </div>
+                    )}
+
+                    {/* Preview */}
+                    <div style={{
+                      textAlign: 'center',
+                      marginBottom: '14px',
+                      height: isMobile ? '80px' : '100px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      {product.preview.startsWith('http') ? (
+                        <img
+                          src={product.preview}
+                          alt={product.name}
+                          style={{
+                            width: isMobile ? '70px' : '90px',
+                            height: isMobile ? '70px' : '90px',
+                            borderRadius: '12px',
+                            objectFit: 'cover',
+                            border: '2px solid rgba(255, 215, 0, 0.3)'
+                          }}
+                        />
+                      ) : (
+                        <div style={{
+                          fontSize: isMobile ? '48px' : '64px',
+                          filter: product.owned ? 'none' : canAfford ? 'none' : 'grayscale(100%) opacity(0.5)'
+                        }}>
+                          {product.preview}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Product Info */}
+                    <div style={{ textAlign: 'center' }}>
+                      <h3 style={{
+                        margin: '0 0 6px 0',
+                        fontSize: isMobile ? 14 : 16,
+                        fontWeight: 800,
+                        color: '#ffffff',
+                        textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px'
+                      }}>
+                        <span>{product.icon}</span>
+                        <span>{product.name}</span>
+                      </h3>
+
+                      <p style={{
+                        margin: '0 0 12px 0',
+                        fontSize: isMobile ? 11 : 12,
+                        color: 'rgba(200, 200, 200, 0.8)',
+                        lineHeight: '1.4',
+                        minHeight: isMobile ? '32px' : '36px'
+                      }}>
+                        {product.description}
+                      </p>
+
+                      {/* Price */}
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                        marginBottom: '12px',
+                        flexWrap: 'wrap'
+                      }}>
+                        {product.price > 0 && (
+                          <>
+                            {discountPercent > 0 && (
+                              <span style={{
+                                fontSize: 12,
+                                color: 'rgba(255, 150, 150, 0.8)',
+                                textDecoration: 'line-through'
+                              }}>
+                                {product.price}💎
+                              </span>
+                            )}
+                            <span style={{
+                              fontSize: isMobile ? 16 : 18,
+                              fontWeight: 800,
+                              color: canAfford ? '#ffd700' : 'rgba(255, 100, 100, 0.8)',
+                              textShadow: canAfford ? '0 0 8px rgba(255, 215, 0, 0.5)' : 'none'
+                            }}>
+                              {discountedPrice}💎
+                            </span>
+                            {discountPercent > 0 && (
+                              <span style={{
+                                background: 'rgba(255, 100, 100, 0.9)',
+                                color: 'white',
+                                padding: '2px 6px',
+                                borderRadius: '6px',
+                                fontSize: 10,
+                                fontWeight: 800
+                              }}>
+                                -{discountPercent}%
+                              </span>
+                            )}
+                          </>
+                        )}
+                        {product.price === 0 && (
+                          <span style={{
+                            fontSize: isMobile ? 16 : 18,
+                            fontWeight: 800,
+                            color: 'rgba(80, 255, 80, 0.9)',
+                            textShadow: '0 0 8px rgba(80, 255, 80, 0.5)'
+                          }}>
+                            FREE
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Buy Button */}
+                      {product.owned ? (
+                        <div style={{
+                          background: 'rgba(50, 200, 100, 0.2)',
+                          color: 'rgba(80, 255, 80, 0.9)',
+                          padding: '10px',
+                          borderRadius: '10px',
+                          fontSize: 12,
+                          fontWeight: 700,
+                          textAlign: 'center',
+                          border: '1px solid rgba(50, 200, 100, 0.4)',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px'
+                        }}>
+                          ✓ Owned
+                        </div>
+                      ) : (
+                        <button
+                          disabled={!canAfford}
+                          style={{
+                            background: canAfford
+                              ? 'linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 107, 53, 0.2))'
+                              : 'rgba(100, 100, 100, 0.2)',
+                            border: `2px solid ${canAfford ? 'rgba(255, 215, 0, 0.5)' : 'rgba(100, 100, 100, 0.3)'}`,
+                            color: canAfford ? '#ffd700' : 'rgba(150, 150, 150, 0.7)',
+                            fontSize: isMobile ? 11 : 12,
+                            fontWeight: 800,
+                            padding: isMobile ? '10px' : '12px 16px',
+                            borderRadius: '10px',
+                            cursor: canAfford ? 'pointer' : 'not-allowed',
+                            transition: 'all 0.3s ease',
+                            width: '100%',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px'
+                          }}
+                        >
+                          {canAfford ? '🛒 Buy Now' : '❌ Insufficient'}
+                        </button>
+                      )}
+                    </div>
                   </div>
-                ))
-              )
-            }
-          </div>
+                )
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>
