@@ -78,17 +78,19 @@ const CasinoAdsCarousel: React.FC<CasinoAdsCarouselProps> = ({ tablesAvailable, 
         ))}
       </div>
 
-      {/* Dots indicator */}
-      <div className="casino-ads-dots">
-        {ads.map((_, index) => (
-          <button
-            key={index}
-            className={`casino-ad-dot ${index === currentIndex ? 'active' : ''}`}
-            onClick={() => handleDotClick(index)}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
+      {/* Dots indicator - solo mostrar si hay más de 1 slide */}
+      {ads.length > 1 && (
+        <div className="casino-ads-dots">
+          {ads.map((_, index) => (
+            <button
+              key={index}
+              className={`casino-ad-dot ${index === currentIndex ? 'active' : ''}`}
+              onClick={() => handleDotClick(index)}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
