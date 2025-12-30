@@ -1,4 +1,4 @@
-# 🎨 Testing del Favicon - Poker Night by Banabets
+# 🎨 Testing del Favicon - Poker Night
 
 ## 🚀 Cómo Probar el Favicon
 
@@ -256,6 +256,6 @@ location ~* \.(svg)$ {
 
 ---
 
-**🎰 Poker Night by Banabets** - Hasta el favicon juega con estilo. 🃏✨
+**🎰 Poker Night** - Hasta el favicon juega con estilo. 🃏✨
 
 ¿Te gusta cómo se ve el favicon? ¿Quieres que haga algún ajuste al diseño o animaciones?

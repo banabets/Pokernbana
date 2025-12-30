@@ -267,3 +267,4 @@ Settings
 
 **¿Puedes decirme exactamente qué ves cuando haces clic en Settings de tu servicio principal?** Eso me ayudará a darte instrucciones más específicas.
 
+

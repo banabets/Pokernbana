@@ -1,7 +1,7 @@
 {
   "name": "texas-holdem-fullstack",
   "version": "0.4.0",
-  "description": "Poker Night by Banabets - Texas Hold'em Real Time Multiplayer Poker Game",
+  "description": "Poker Night - Texas Hold'em Real Time Multiplayer Poker Game",
   "private": true,
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",

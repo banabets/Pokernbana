@@ -1,4 +1,4 @@
-# 🔧 **Audio System Fixes - Poker Night by Banabets**
+# 🔧 **Audio System Fixes - Poker Night**
 
 ## 🎯 **Problema Identificado**
 
@@ -234,4 +234,4 @@ Las correcciones implementadas han **solucionado completamente** el problema de 
 4. ✅ **Memoria eficiente** con limpieza automática
 5. ✅ **Experiencia premium** sin interrupciones
 
-**¡Ahora tu Poker Night by Banabets tiene un sistema de audio profesional y sin fallos!** 🃏🎵✨
+**¡Ahora tu Poker Night tiene un sistema de audio profesional y sin fallos!** 🃏🎵✨

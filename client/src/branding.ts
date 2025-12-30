@@ -1,23 +1,23 @@
-// Configuración de branding para Poker Night by Banabets
+// Configuración de branding para Poker Night
 export const BRANDING = {
-  name: "Poker Night by Banabets",
+  name: "Poker Night",
   subtitle: "Texas Hold'em • Real Time • Multiplayer",
-  fullTitle: "Poker Night by Banabets - Texas Hold'em Real Time Multiplayer",
+  fullTitle: "Poker Night - Texas Hold'em Real Time Multiplayer",
   description: "Texas Hold'em Real Time Multiplayer Poker Game",
   tagline: "Play online with friends, custom themes, AI bots, and more!",
 
   // SEO
   meta: {
-    title: "Poker Night by Banabets - Texas Hold'em Real Time Multiplayer",
-    description: "Poker Night by Banabets - Texas Hold'em Real Time Multiplayer Poker Game. Play online with friends, custom themes, AI bots, and more!",
-    keywords: "poker, texas holdem, online poker, multiplayer poker, poker night, real time poker, poker game, banabets"
+    title: "Poker Night - Texas Hold'em Real Time Multiplayer",
+    description: "Poker Night - Texas Hold'em Real Time Multiplayer Poker Game. Play online with friends, custom themes, AI bots, and more!",
+    keywords: "poker, texas holdem, online poker, multiplayer poker, poker night, real time poker, poker game"
   },
 
   // Social
   social: {
-    twitter: "@PokerNightBN",
+    twitter: "@PokerNight",
     discord: "discord.gg/pokernight",
-    website: "https://pokernight.banabets.com"
+    website: "https://pokernight.com"
   },
 
   // Features highlights

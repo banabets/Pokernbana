@@ -1,4 +1,4 @@
-# 🎵 Sistema de Audio - Poker Night by Banabets
+# 🎵 Sistema de Audio - Poker Night
 
 ## 🎯 **¡Sonidos Épicos para tu Juego de Poker!**
 
@@ -386,7 +386,7 @@ console.log('Current Volume:', settings.masterVolume)
 
 ## 🎰 **Resultado Final**
 
-Tu **Poker Night by Banabets** ahora tiene un **sistema de audio profesional** que:
+Tu **Poker Night** ahora tiene un **sistema de audio profesional** que:
 
 1. ✅ **Hace que cada acción suene increíble**
 2. ✅ **Crea atmósfera de casino realista**

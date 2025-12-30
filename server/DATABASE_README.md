@@ -1,4 +1,4 @@
-# 🗄️ Base de Datos PostgreSQL - Poker Night by Banabets
+# 🗄️ Base de Datos PostgreSQL - Poker Night
 
 Esta implementación agrega una base de datos PostgreSQL sólida al proyecto de poker, preparada para futuras integraciones de criptomonedas.
 

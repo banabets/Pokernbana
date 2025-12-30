@@ -1,4 +1,4 @@
-# 🎨 Branding - Poker Night by Banabets
+# 🎨 Branding - Poker Night
 
 **Texas Hold'em • Real Time • Multiplayer**
 
@@ -6,7 +6,7 @@
 
 ### **Nombre Principal**
 ```
-Poker Night by Banabets
+Poker Night
 ```
 
 ### **Tagline**
@@ -16,7 +16,7 @@ Texas Hold'em • Real Time • Multiplayer
 
 ### **Descripción Completa**
 ```
-Poker Night by Banabets - Texas Hold'em Real Time Multiplayer Poker Game
+Poker Night - Texas Hold'em Real Time Multiplayer Poker Game
 Play online with friends, custom themes, AI bots, and more!
 ```
 
@@ -41,22 +41,22 @@ Play online with friends, custom themes, AI bots, and more!
 
 ### **Header Principal**
 ```tsx
-<Poker Night by Banabets>
+<Poker Night>
   <Texas Hold'em • Real Time • Multiplayer>
 </Poker>
 ```
 
 ### **Lobby**
 ```tsx
-<Poker Night by Banabets>
+<Poker Night>
   <Texas Hold'em • Real Time Multiplayer>
 </Poker>
 ```
 
 ### **SEO Meta Tags**
 ```html
-<title>Poker Night by Banabets - Texas Hold'em Real Time Multiplayer</title>
-<meta name="description" content="Poker Night by Banabets - Texas Hold'em Real Time Multiplayer Poker Game...">
+<title>Poker Night - Texas Hold'em Real Time Multiplayer</title>
+<meta name="description" content="Poker Night - Texas Hold'em Real Time Multiplayer Poker Game...">
 <meta name="keywords" content="poker, texas holdem, online poker, multiplayer poker, poker night, real time poker">
 ```
 
@@ -76,7 +76,7 @@ Play online with friends, custom themes, AI bots, and more!
 
 #### **✅ Ventajas**
 - **Memorable**: Fácil de recordar
-- **Personal**: Marca única de Banabets
+- **Personal**: Marca única
 - **Descriptivo**: Claridad sobre qué es
 - **Profesional**: Suena como producto premium
 - **SEO-friendly**: Bueno para motores de búsqueda
@@ -113,7 +113,7 @@ import BRANDING from '../branding'
 
 ### **Posicionamiento**
 ```
-Poker Night by Banabets se posiciona como:
+Poker Night se posiciona como:
 - Una experiencia social de poker online
 - Un juego premium con identidad personal
 - Una plataforma preparada para el futuro
@@ -200,4 +200,4 @@ box-shadow: 0 10px 30px rgba(0,0,0,.35);
 
 ---
 
-**Poker Night by Banabets** - Donde los amigos se reúnen para jugar poker online con estilo premium y tecnología de vanguardia. 🃏🎰✨
+**Poker Night** - Donde los amigos se reúnen para jugar poker online con estilo premium y tecnología de vanguardia. 🃏🎰✨

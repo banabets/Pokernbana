@@ -212,3 +212,4 @@ Esto generará el dominio automáticamente.
 
 **¿Puedes intentar entrar al servicio principal (no al proyecto) y decirme qué opciones ves ahí?** O si prefieres, puedo ayudarte a configurarlo con la CLI de Railway.
 
+

@@ -383,3 +383,4 @@ Para medir el impacto de las mejoras:
 **Última actualización**: 2024-01-XX
 **Versión del documento**: 1.0
 
+

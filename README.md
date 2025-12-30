@@ -1,4 +1,4 @@
-# Poker Night by Banabets
+# Poker Night
 
 **Texas Hold'em • Real Time Multiplayer**
 

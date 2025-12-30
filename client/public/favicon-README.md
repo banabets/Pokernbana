@@ -1,4 +1,4 @@
-# 🎨 Favicon - Poker Night by Banabets
+# 🎨 Favicon - Poker Night
 
 ## 📋 Descripción del Favicon
 
@@ -174,4 +174,4 @@
 
 ---
 
-**🎰 Poker Night by Banabets** - Donde hasta el favicon juega poker con estilo. 🃏✨
+**🎰 Poker Night** - Donde hasta el favicon juega poker con estilo. 🃏✨

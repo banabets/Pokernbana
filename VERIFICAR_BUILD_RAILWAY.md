@@ -188,3 +188,4 @@ Si nada funciona:
 
 **¿Puedes compartir los logs del build que ves en Railway?** Eso me ayudará a identificar el problema específico.
 
+
