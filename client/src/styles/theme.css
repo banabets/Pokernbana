@@ -4435,6 +4435,11 @@ button, .pill {
     max-height: 85px !important;
   }
 
+  /* Search bar más abajo */
+  .room-search-filters {
+    margin-top: 12px !important;
+  }
+
   /* Balance más cuadrado */
   .balance-badge {
     padding: 12px 14px !important;

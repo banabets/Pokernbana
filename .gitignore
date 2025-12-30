@@ -84,6 +84,12 @@ shared/dist/
 *.mov
 *.psd
 
+# Excepciones - archivos necesarios para el proyecto
+!client/public/logo.png
+!client/public/logo2.png
+!client/public/vipi.png
+!client/public/123.mp4
+
 # Repos anidados que no deben trackearse
 POKERN-clean/
 POKERNIGHT/
