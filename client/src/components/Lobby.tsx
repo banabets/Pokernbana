@@ -547,14 +547,16 @@ export default function Lobby({
     }
   }, [socket])
 
-  console.log('Lobby current rooms state:', rooms)
-  const filtered = rooms
-    .filter(r => (r.name || r.roomId).toLowerCase().includes(q.toLowerCase()))
-    .sort((a,b)=>{
-      if (sort==='players') return (b.players/(b.seats||1)) - (a.players/(a.seats||1))
-      if (sort==='blinds')  return (b.bigBlind||0) - (a.bigBlind||0)
-      return (a.name||'').localeCompare(b.name||'')
-    })
+  // Memoized filtering for performance
+  const filtered = React.useMemo(() => {
+    return rooms
+      .filter(r => (r.name || r.roomId).toLowerCase().includes(q.toLowerCase()))
+      .sort((a,b)=>{
+        if (sort==='players') return (b.players/(b.seats||1)) - (a.players/(a.seats||1))
+        if (sort==='blinds')  return (b.bigBlind||0) - (a.bigBlind||0)
+        return (a.name||'').localeCompare(b.name||'')
+      })
+  }, [rooms, q, sort])
 
   const quickJoin = (roomId: string) => {
     console.log('🚪 CLIENT: Quick Join called for room:', roomId)
@@ -574,7 +576,7 @@ export default function Lobby({
   return (
     <Wrap>
       <Top>
-        <BrandingTitle showSubtitle={true} />
+        <BrandingTitle showSubtitle={false} />
         <Online>👥 Online: <b>{online}</b></Online>
         <CreateBtn onClick={() => {
           // Crear mesa con configuración por defecto

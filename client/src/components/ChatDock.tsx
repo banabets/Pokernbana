@@ -1,6 +1,7 @@
 import React from 'react'
 import type { Socket } from 'socket.io-client'
 import * as Protocol from 'shared/protocol'
+import EmojiPicker from './EmojiPicker'
 const { ClientEvents, ServerEvents } = Protocol
 
 type ChatMsg = { id: string; userId: string; userName: string; text: string; ts: number; subscription?: 'free' | 'bronze' | 'silver' | 'gold' | 'diamond'; avatar?: string }
@@ -16,6 +17,9 @@ export default function ChatDock({ socket, avatar, roomId, subscription, isMobil
 }){
   const [chat, setChat] = React.useState<ChatMsg[]>([])
   const [v, setV] = React.useState('')
+  const [showEmojiPicker, setShowEmojiPicker] = React.useState(false)
+  const [typingUsers, setTypingUsers] = React.useState<Set<string>>(new Set())
+  const typingTimeoutRef = React.useRef<{ [key: string]: NodeJS.Timeout }>({})
   const myId = me?.id || localStorage.getItem('myUserId') || socket?.id || null
 
   // refs para autoscroll y detección de “estoy en el fondo”
@@ -135,17 +139,36 @@ export default function ChatDock({ socket, avatar, roomId, subscription, isMobil
       })
     }
 
+    // Typing indicators
+    const onTypingStart = (data: { userId: string, userName?: string }) => {
+      if (data.userId !== myId) {
+        setTypingUsers(prev => new Set([...prev, data.userId]))
+      }
+    }
+    
+    const onTypingStop = (data: { userId: string }) => {
+      setTypingUsers(prev => {
+        const next = new Set(prev)
+        next.delete(data.userId)
+        return next
+      })
+    }
+
     socket.on('CHAT_HISTORY', onHistory)
     socket.on('CHAT_MESSAGE', onMessage)
     socket.on('USER_DATA_UPDATED', onUserDataUpdated)
+    socket.on('TYPING_START', onTypingStart)
+    socket.on('TYPING_STOP', onTypingStop)
     
     return () => {
       socket.off('CHAT_HISTORY', onHistory)
       socket.off('CHAT_MESSAGE', onMessage)
       socket.off('USER_DATA_UPDATED', onUserDataUpdated)
+      socket.off('TYPING_START', onTypingStart)
+      socket.off('TYPING_STOP', onTypingStop)
       socket.emit('CHAT_LEAVE', { roomId })
     }
-  }, [socket, roomId])
+  }, [socket, roomId, myId])
 
   // Chat global como fallback (solo si no hay roomId)
   React.useEffect(() => {
@@ -276,10 +299,27 @@ export default function ChatDock({ socket, avatar, roomId, subscription, isMobil
 
     // Escuchar eventos separados para chat global
     console.log('🎯 CHATDOCK: Registering global chat listeners...')
+    // Typing indicators for global chat
+    const onTypingStart = (data: { userId: string, userName?: string }) => {
+      if (data.userId !== myId) {
+        setTypingUsers(prev => new Set([...prev, data.userId]))
+      }
+    }
+    
+    const onTypingStop = (data: { userId: string }) => {
+      setTypingUsers(prev => {
+        const next = new Set(prev)
+        next.delete(data.userId)
+        return next
+      })
+    }
+
     socket.on('GLOBAL_CHAT_HISTORY', onHistory)
     // IMPORTANTE: Solo escuchar mensajes globales, NO mensajes de mesa
     socket.on('GLOBAL_CHAT_MESSAGE', onMsg)  // Evento específico para chat global
     socket.on('USER_DATA_UPDATED', onUserDataUpdated)
+    socket.on('GLOBAL_TYPING_START', onTypingStart)
+    socket.on('GLOBAL_TYPING_STOP', onTypingStop)
     console.log('🎯 CHATDOCK: Global chat listeners registered successfully')
     
     return () => {
@@ -287,9 +327,11 @@ export default function ChatDock({ socket, avatar, roomId, subscription, isMobil
       socket.off('GLOBAL_CHAT_HISTORY', onHistory)
       socket.off('GLOBAL_CHAT_MESSAGE', onMsg)  // Evento específico para chat global
       socket.off('USER_DATA_UPDATED', onUserDataUpdated)
+      socket.off('GLOBAL_TYPING_START', onTypingStart)
+      socket.off('GLOBAL_TYPING_STOP', onTypingStop)
       console.log('🎯 CHATDOCK: Global chat listeners cleaned up')
     }
-  }, [socket, roomId])
+  }, [socket, roomId, myId])
 
   // Sincronización reactiva para cambios de avatar/username en chat global
   React.useEffect(() => {
@@ -521,7 +563,44 @@ export default function ChatDock({ socket, avatar, roomId, subscription, isMobil
         {quick.map(e => (
           <button key={e} className="pill" onClick={()=>send(e)}>{e}</button>
         ))}
+        <button 
+          className="pill" 
+          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+          style={{ position: 'relative' }}
+        >
+          😀
+          {showEmojiPicker && (
+            <div style={{ position: 'absolute', bottom: '100%', right: 0, marginBottom: '8px' }}>
+              <EmojiPicker
+                onEmojiSelect={(emoji) => {
+                  setV(prev => prev + emoji)
+                  setShowEmojiPicker(false)
+                  autoSize()
+                }}
+                onClose={() => setShowEmojiPicker(false)}
+              />
+            </div>
+          )}
+        </button>
       </div>
+
+      {typingUsers.size > 0 && (
+        <div className="typing-indicator">
+          <span>
+            {Array.from(typingUsers).map((userId, idx, arr) => {
+              const userName = chat.find(m => m.userId === userId)?.userName || 'Someone'
+              if (idx === arr.length - 1 && arr.length > 1) return ` and ${userName}`
+              if (idx === arr.length - 1) return `${userName}`
+              return `${userName}, `
+            })}
+          </span>
+          <span className="typing-dots">
+            <span className="typing-dot"></span>
+            <span className="typing-dot"></span>
+            <span className="typing-dot"></span>
+          </span>
+        </div>
+      )}
 
       <div className="chat-input">
         <textarea
@@ -529,12 +608,60 @@ export default function ChatDock({ socket, avatar, roomId, subscription, isMobil
           rows={1}
           value={v}
           placeholder="Type a message… (Enter sends, Shift+Enter line break)"
-          onInput={e => { setV((e.target as HTMLTextAreaElement).value); autoSize() }}
+          onInput={e => { 
+            const value = (e.target as HTMLTextAreaElement).value
+            setV(value)
+            autoSize()
+            
+            // Emit typing indicator
+            if (value.trim() && socket) {
+              if (roomId) {
+                socket.emit('TYPING_START', { roomId })
+              } else {
+                socket.emit('GLOBAL_TYPING_START')
+              }
+              
+              // Clear existing timeout
+              if (typingTimeoutRef.current[myId || '']) {
+                clearTimeout(typingTimeoutRef.current[myId || ''])
+              }
+              
+              // Stop typing after 3 seconds of inactivity
+              typingTimeoutRef.current[myId || ''] = setTimeout(() => {
+                if (roomId) {
+                  socket.emit('TYPING_STOP', { roomId })
+                } else {
+                  socket.emit('GLOBAL_TYPING_STOP')
+                }
+              }, 3000)
+            }
+          }}
           onKeyDown={e => {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(v) }
+            if (e.key === 'Enter' && !e.shiftKey) { 
+              e.preventDefault()
+              send(v)
+              // Stop typing when sending
+              if (socket) {
+                if (roomId) {
+                  socket.emit('TYPING_STOP', { roomId })
+                } else {
+                  socket.emit('GLOBAL_TYPING_STOP')
+                }
+              }
+            }
           }}
         />
-        <button className="send-btn" onClick={()=>send(v)}>Send</button>
+        <button className="send-btn" onClick={()=>{
+          send(v)
+          // Stop typing when sending
+          if (socket) {
+            if (roomId) {
+              socket.emit('TYPING_STOP', { roomId })
+            } else {
+              socket.emit('GLOBAL_TYPING_STOP')
+            }
+          }
+        }}>Send</button>
       </div>
     </aside>
   )

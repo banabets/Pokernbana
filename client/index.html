@@ -27,7 +27,51 @@
   <meta name="msapplication-config" content="/browserconfig.xml" />
   <meta name="msapplication-TileImage" content="https://cdn-icons-png.flaticon.com/512/9590/9590099.png" />
 
+  <!-- Google Fonts - Cartoon/Rounded Style -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Comfortaa:wght@700&family=Nunito:wght@800;900&family=Quicksand:wght@700&family=Rubik:wght@800;900&family=Baloo+2:wght@800&display=swap" rel="stylesheet">
+
   <title>Poker Night - Texas Hold'em Real Time Multiplayer</title>
+  <script>
+    // Forzar scroll a la parte superior inmediatamente
+    (function() {
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.documentElement.scrollLeft = 0;
+      document.body.scrollTop = 0;
+      document.body.scrollLeft = 0;
+      
+      // Prevenir cualquier scroll durante la carga
+      document.addEventListener('scroll', function(e) {
+        if (window.scrollY > 0 || window.scrollX > 0) {
+          window.scrollTo(0, 0);
+        }
+      }, { passive: false, capture: true });
+    })();
+  </script>
+  <style>
+    html, body {
+      scroll-behavior: auto !important;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      top: 0;
+      left: 0;
+    }
+    #root {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+  </style>
 </head>
 <body>
   <div id="root"></div>

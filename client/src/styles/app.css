@@ -1,5 +1,5 @@
 :root {
-  --topbar-h: 56px; /* se sincroniza en App.tsx */
+  --topbar-h: 85px; /* se sincroniza en App.tsx */
 
   /* Breakpoints responsive */
   --mobile: 480px;
@@ -45,6 +45,8 @@ html {
 
 body {
   min-height: -webkit-fill-available;
+  background: radial-gradient(ellipse 200% 100% at 50% 0%, #0a1a0f 0%, #0d2518 25%, #0f2a1d 50%, #0a1a0f 100%) !important;
+  background-attachment: fixed !important;
 }
 
 /* Fix for iPhone notch and home indicator */
@@ -58,7 +60,8 @@ body {
 
   .lobby-main.mobile-layout {
     padding-bottom: calc(60px + env(safe-area-inset-bottom)) !important;
-    padding-top: env(safe-area-inset-top) !important;
+    padding-top: calc(20px + env(safe-area-inset-top)) !important;
+    margin-top: 10px;
   }
 
   .mobile-chat-toggle {
@@ -85,6 +88,8 @@ body {
   min-height: 100vh;
   min-height: -webkit-fill-available;
   height: 100%;
+  background: radial-gradient(ellipse 200% 100% at 50% 0%, #0a1a0f 0%, #0d2518 25%, #0f2a1d 50%, #0a1a0f 100%) !important;
+  background-attachment: fixed !important;
 }
 
 /* Prevent rubber band scrolling on iOS */
@@ -193,9 +198,10 @@ body.theme-space { background: radial-gradient(120% 120% at 50% -10%, #0b0f2a, #
   display: grid; grid-template-columns: auto 1fr auto;
   align-items: center; gap: var(--spacing-sm);
   padding: var(--spacing-sm) var(--spacing-lg);
-  background: rgba(0,0,0,.28);
-  border-bottom: 1px solid rgba(255,255,255,.08);
-  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  border-bottom: none !important;
   z-index: 1000;
   min-height: var(--topbar-h);
 }
@@ -204,6 +210,8 @@ body.theme-space { background: radial-gradient(120% 120% at 50% -10%, #0b0f2a, #
   align-items: center;
   gap: var(--spacing-sm);
   min-width: 0; /* Permite que se recorte */
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 .topbar .title {
   font-weight: 800;
@@ -224,6 +232,9 @@ body.theme-space { background: radial-gradient(120% 120% at 50% -10%, #0b0f2a, #
   .topbar {
     padding: var(--spacing-xs) var(--spacing-sm);
     gap: var(--spacing-xs);
+    background: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
   }
 
   .topbar .title {
@@ -253,17 +264,34 @@ body.theme-space { background: radial-gradient(120% 120% at 50% -10%, #0b0f2a, #
   .online-badge {
     display: none !important;
   }
+
+  /* Balance badge en tablets */
+  .balance-badge {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    font-size: 13px;
+    gap: 4px;
+  }
+
+  .balance-badge .balance-amount {
+    font-weight: 700;
+  }
 }
 
 @media (max-width: 480px) {
   .topbar {
     grid-template-columns: auto auto 1fr;
-    padding: var(--spacing-xs);
-    gap: var(--spacing-xs);
+    padding: 6px 10px;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
   }
 
   .topbar .title-section {
     grid-column: 1;
+    gap: 8px;
   }
 
   .topbar .title {
@@ -271,9 +299,53 @@ body.theme-space { background: radial-gradient(120% 120% at 50% -10%, #0b0f2a, #
     max-width: 100px;
   }
 
-  /* Balance badge se oculta en móviles pequeños */
+  /* Logo más pequeño en móvil */
+  .logo-pn {
+    height: 50px !important;
+    max-height: 50px !important;
+  }
+
+  /* Ocultar imagen VIP en móvil */
+  .vipi-header-image {
+    display: none !important;
+  }
+
+  /* Balance badge responsive en móviles - MÁS ANCHO */
   .balance-badge {
-    display: none;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 10px 24px !important;
+    font-size: 16px !important;
+    gap: 6px !important;
+    white-space: nowrap !important;
+    flex-grow: 1 !important;
+    max-width: 200px !important;
+    min-width: 140px !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    border-radius: 25px !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .balance-badge .balance-label {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+  }
+
+  .balance-badge .balance-amount {
+    font-size: 18px !important;
+    font-weight: 800 !important;
+  }
+
+  /* Ocultar SOL en móvil para dar espacio */
+  .balance-sol {
+    display: none !important;
+  }
+
+  /* Separar contenido del header en móvil */
+  .lobby-main.mobile-layout {
+    padding-top: calc(25px + env(safe-area-inset-top)) !important;
+    margin-top: 15px;
   }
 
   /* Todos los elementos de actions se ocultan en móviles */
@@ -295,12 +367,17 @@ body.theme-space { background: radial-gradient(120% 120% at 50% -10%, #0b0f2a, #
   box-shadow: inset 0 1px 0 rgba(255,255,255,.2);
 }
 .balance-badge{
+  display: flex;
+  align-items: center;
+  gap: 4px;
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius:999px;
   background:rgba(0,0,0,.35);
   border:1px solid rgba(255,255,255,.08);
   font-variant-numeric: tabular-nums;
   font-size: var(--text-xs);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .online-badge{
   padding: var(--spacing-xs) var(--spacing-sm);
@@ -329,6 +406,10 @@ body.theme-space { background: radial-gradient(120% 120% at 50% -10%, #0b0f2a, #
   height: 8px !important;
   background: #2ecc71 !important;
   border-radius: 50% !important;
+}
+
+/* Animation only when visible */
+.online-pill:hover .online-dot {
   animation: online-pulse 2s infinite !important;
 }
 
@@ -336,6 +417,55 @@ body.theme-space { background: radial-gradient(120% 120% at 50% -10%, #0b0f2a, #
   0% { opacity: 1; }
   50% { opacity: 0.5; }
   100% { opacity: 1; }
+}
+
+/* Empty seat styles - CSS hover for performance */
+.empty-seat {
+  width: clamp(60px, 12vw, 80px);
+  height: clamp(60px, 12vw, 80px);
+  border-radius: 50%;
+  background: rgba(84, 255, 138, 0.1);
+  border: 2px solid rgba(84, 255, 138, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: var(--spacing-xs);
+}
+
+.empty-seat--active {
+  background: rgba(84, 255, 138, 0.3);
+  border: 2px solid #54ff8a;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(84, 255, 138, 0.4);
+}
+
+.empty-seat--active:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(84, 255, 138, 0.6);
+}
+
+.empty-seat__content {
+  text-align: center;
+  color: rgba(84, 255, 138, 0.5);
+  font-size: clamp(10px, 3vw, 12px);
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.empty-seat--active .empty-seat__content {
+  color: #54ff8a;
+}
+
+.empty-seat__icon {
+  font-size: clamp(14px, 4vw, 18px);
+  margin-bottom: var(--spacing-xs);
+}
+
+.empty-seat__number {
+  font-size: inherit;
 }
 
 /* Botón */
@@ -440,19 +570,22 @@ body.theme-space { background: radial-gradient(120% 120% at 50% -10%, #0b0f2a, #
     max-width: 100%;
     overflow-y: auto;
     padding-bottom: 20px;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 
   .card-list > * {
-    width: 100%;
-    max-width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     flex-shrink: 0;
+    margin: 0 !important;
   }
 }
 .room-card{
   position: relative;
   transition: transform .18s ease, box-shadow .18s ease;
 }
-.room-card:hover{ transform: perspective(700px) rotateX(2deg) rotateY(-2deg) translateY(-2px); box-shadow: 0 22px 36px rgba(0,0,0,.45); }
+.room-card:hover{ transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 24px rgba(0,0,0,.4); }
 
 /* Lista de salas responsive */
 @media (max-width: 768px) {
@@ -466,6 +599,14 @@ body.theme-space { background: radial-gradient(120% 120% at 50% -10%, #0b0f2a, #
   .card-list {
     gap: var(--spacing-xs);
     grid-template-columns: 1fr; /* Una columna en móviles pequeños */
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  .card-list > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
   }
 
   .room-card:hover {
@@ -492,6 +633,10 @@ body.theme-space { background: radial-gradient(120% 120% at 50% -10%, #0b0f2a, #
 .room-card .preview::before, .room-card .preview::after{
   content:''; position:absolute; width:16px; height:16px; border-radius:50%;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 2px 4px rgba(0,0,0,.35);
+}
+
+/* Animation only on hover for performance */
+.room-card:hover .preview::before, .room-card:hover .preview::after{
   animation: float 3.5s ease-in-out infinite;
 }
 @keyframes float{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-6px) } }
@@ -626,6 +771,16 @@ body.theme-space { background: radial-gradient(120% 120% at 50% -10%, #0b0f2a, #
     -webkit-overflow-scrolling: touch;
   }
 
+  body, html, #root {
+    background: radial-gradient(ellipse 200% 100% at 50% 0%, #0a1a0f 0%, #0d2518 25%, #0f2a1d 50%, #0a1a0f 100%) !important;
+    background-attachment: fixed !important;
+  }
+
+  body.theme-casino {
+    background: radial-gradient(ellipse 200% 100% at 50% 0%, #0a1a0f 0%, #0d2518 25%, #0f2a1d 50%, #0a1a0f 100%) !important;
+    background-attachment: fixed !important;
+  }
+
   /* Mejorar rendimiento en móviles */
   .card, .modal, .topbar {
     will-change: transform;
@@ -666,6 +821,18 @@ body.theme-space { background: radial-gradient(120% 120% at 50% -10%, #0b0f2a, #
   body {
     font-size: 14px;
     line-height: 1.4;
+    background: radial-gradient(ellipse 200% 100% at 50% 0%, #0a1a0f 0%, #0d2518 25%, #0f2a1d 50%, #0a1a0f 100%) !important;
+    background-attachment: fixed !important;
+  }
+
+  html {
+    background: radial-gradient(ellipse 200% 100% at 50% 0%, #0a1a0f 0%, #0d2518 25%, #0f2a1d 50%, #0a1a0f 100%) !important;
+    background-attachment: fixed !important;
+  }
+
+  #root {
+    background: radial-gradient(ellipse 200% 100% at 50% 0%, #0a1a0f 0%, #0d2518 25%, #0f2a1d 50%, #0a1a0f 100%) !important;
+    background-attachment: fixed !important;
   }
 
   /* Aumentar contraste en móviles */
@@ -675,7 +842,8 @@ body.theme-space { background: radial-gradient(120% 120% at 50% -10%, #0b0f2a, #
 
   /* Los temas heredan el fondo base, pero theme-casino mantiene consistencia */
   body.theme-casino {
-    background: inherit;
+    background: radial-gradient(ellipse 200% 100% at 50% 0%, #0a1a0f 0%, #0d2518 25%, #0f2a1d 50%, #0a1a0f 100%) !important;
+    background-attachment: fixed !important;
   }
 }
 
@@ -1341,21 +1509,21 @@ body.theme-space { background: radial-gradient(120% 120% at 50% -10%, #0b0f2a, #
 
 /* Desktop chat - visible by default */
 .desktop-chat-table {
-  display: block;
+  display: none !important;
 }
 
 .mobile-chat-table {
-  display: none;
+  display: none !important;
 }
 
-/* Mobile chat - show only on mobile */
+/* Mobile chat - oculto también en móvil */
 @media (max-width: 768px) {
   .desktop-chat-table {
-    display: none;
+    display: none !important;
   }
 
   .mobile-chat-table {
-    display: block;
+    display: none !important;
   }
 }
 

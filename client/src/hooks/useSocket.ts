@@ -6,6 +6,15 @@ const { ServerEvents = {}, ClientEvents = {} } = Protocol
 
 type State = any
 
+// Debounce utility for performance
+function debounce<T extends (...args: any[]) => void>(fn: T, ms: number): T {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null
+  return ((...args: any[]) => {
+    if (timeoutId) clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => fn(...args), ms)
+  }) as T
+}
+
 export function useSocket(onDataRestored?: (data: {
   subscription?: 'free' | 'bronze' | 'silver' | 'gold' | 'diamond',
   avatar?: string
@@ -54,11 +63,22 @@ export function useSocket(onDataRestored?: (data: {
 
     // Detectar automáticamente la URL del servidor
     // En producción (Railway), usar la misma URL que el frontend
-    // En desarrollo, usar localhost:4000
+    // En desarrollo, detectar si estamos en localhost o IP de red local
     const isProduction = import.meta.env.PROD
-    const serverUrl = isProduction 
-      ? window.location.origin // Mismo dominio que el frontend en Railway
-      : (import.meta.env.VITE_SERVER_URL || 'http://localhost:4000')
+    let serverUrl: string
+    
+    if (isProduction) {
+      serverUrl = window.location.origin // Mismo dominio que el frontend en Railway
+    } else {
+      // En desarrollo, detectar si estamos accediendo desde IP de red local
+      const currentHost = window.location.hostname
+      if (currentHost === 'localhost' || currentHost === '127.0.0.1') {
+        serverUrl = import.meta.env.VITE_SERVER_URL || 'http://localhost:4000'
+      } else {
+        // Si accedemos desde IP de red (192.168.x.x), usar esa IP para el servidor también
+        serverUrl = `http://${currentHost}:4000`
+      }
+    }
     console.log('🔗 CLIENT: Connecting to server at:', serverUrl)
 
     const newSocket = io(serverUrl, {
@@ -80,9 +100,8 @@ export function useSocket(onDataRestored?: (data: {
 
     socketRef.current = newSocket
 
-    // Escuchar eventos del servidor
-    const handleTableState = (s:State) => {
-
+    // Escuchar eventos del servidor - debounced for performance (16ms = ~60fps)
+    const handleTableStateRaw = (s:State) => {
       // Detectar si todos hicieron all-in y mostrar notificación
       const activePlayers = s.players?.filter(p => !p.folded) || []
       const allAllIn = activePlayers.length > 1 && activePlayers.every(p => p.isAllIn)
@@ -124,6 +143,9 @@ export function useSocket(onDataRestored?: (data: {
         }
       }
     }
+
+    // Debounced handler - prevents excessive re-renders during rapid state updates
+    const handleTableState = debounce(handleTableStateRaw, 16)
 
     const handleUserConnected = (data: {
       userId: string,

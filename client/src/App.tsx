@@ -3,6 +3,8 @@ import * as Protocol from 'shared/protocol'
 import BrandingTitle from './components/BrandingTitle'
 import BackgroundMusic from './components/BackgroundMusic'
 import AudioManager from './components/AudioManager'
+import RoomSearchFilters from './components/RoomSearchFilters'
+import EmojiPicker from './components/EmojiPicker'
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component<
@@ -101,8 +103,73 @@ import { useSocket } from './hooks/useSocket'
 import Table from './components/Table'
 import ChatDock from './components/ChatDock'
 import OnlineBadge from './components/OnlineBadge'
+
+// Componente para mostrar el balance en SOL
+function BalanceInSOL({ balance }: { balance: number }) {
+  const [solPrice, setSolPrice] = React.useState<number | null>(null)
+  const [loading, setLoading] = React.useState(true)
+
+  const fetchSolPrice = React.useCallback(async () => {
+    try {
+      const response = await fetch('/api/crypto-prices')
+      if (response.ok) {
+        const data = await response.json()
+        if (data.solana?.usd) {
+          setSolPrice(data.solana.usd)
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching SOL price:', err)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  React.useEffect(() => {
+    fetchSolPrice()
+    // Actualizar cada 30 segundos
+    const interval = setInterval(fetchSolPrice, 30000)
+    return () => clearInterval(interval)
+  }, [fetchSolPrice])
+
+  if (loading || !solPrice) {
+    return null
+  }
+
+  const solAmount = balance / solPrice
+
+  return (
+    <span className="balance-sol" style={{
+      marginLeft: 'clamp(4px, 1.5vw, 8px)',
+      fontSize: 'clamp(9px, 2vw, 12px)',
+      opacity: 0.8,
+      color: 'rgba(255, 255, 255, 0.7)',
+      fontFamily: 'inherit',
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '4px'
+    }}>
+      ({solAmount.toFixed(4)} SOL
+      <img
+        src="https://s2.coinmarketcap.com/static/img/coins/64x64/5426.png"
+        alt="SOL"
+        loading="lazy"
+        decoding="async"
+        style={{
+          width: 'clamp(12px, 3vw, 16px)',
+          height: 'clamp(12px, 3vw, 16px)',
+          borderRadius: '50%',
+          objectFit: 'cover',
+          display: 'inline-block',
+          verticalAlign: 'middle'
+        }}
+      />)
+    </span>
+  )
+}
 import Store from './components/Store'
-import CryptoPrices from './components/CryptoPrices'
+// import CryptoPrices from './components/CryptoPrices' // Comentado - reemplazado por CasinoAdsCarousel
+import CasinoAdsCarousel from './components/CasinoAdsCarousel'
 
 
 const SERVER_URL =
@@ -119,8 +186,6 @@ function TopBar({
   balance,
   avatar,
   userName,
-  avatarBorder,
-  avatarDecorations,
   subscription,
   isMobileMenuOpen,
   setIsMobileMenuOpen,
@@ -134,8 +199,6 @@ function TopBar({
   balance: number
   avatar: string
   userName: string
-  avatarBorder: string
-  avatarDecorations: string[]
   subscription?: 'free' | 'bronze' | 'silver' | 'gold' | 'diamond'
   isMobileMenuOpen: boolean
   setIsMobileMenuOpen: (open: boolean) => void
@@ -144,24 +207,47 @@ function TopBar({
     <div className="topbar">
       <div className="title-section">
         <div className="title-container">
-          <span className="title-icon title-icon-left">🎰</span>
-          <BrandingTitle size="small" />
-          <span className="title-icon title-icon-right">🃏</span>
+          <img
+            src="/logo.png"
+            alt="Poker Night"
+            className="logo-pn"
+            style={{
+              height: '90px',
+              width: 'auto',
+              objectFit: 'contain',
+              maxWidth: '100%'
+            }}
+          />
         </div>
+        <img
+          src="/vipi.png"
+          alt="VIP"
+          className="vipi-header-image"
+          style={{
+            width: 'auto',
+            objectFit: 'contain',
+            maxWidth: '100%',
+            borderRadius: '8px'
+          }}
+        />
+      </div>
+
+      {/* Balance y hamburguesa juntos a la derecha */}
+      <div className="topbar-right">
         <div className="balance-badge">
           <span className="balance-label">$</span>
           <span className="balance-amount">{balance.toLocaleString()}</span>
+          <BalanceInSOL balance={balance} />
         </div>
+        <button
+          className="mobile-menu-toggle"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
+        </button>
       </div>
-
-      <button
-        className="mobile-menu-toggle"
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-      >
-        <span className="hamburger-line"></span>
-        <span className="hamburger-line"></span>
-        <span className="hamburger-line"></span>
-      </button>
 
       <div className="actions">
         <button className="pill primary" onClick={onCreate}>
@@ -189,7 +275,7 @@ function TopBar({
               </div>
             </div>
 
-            <div className={`avatar-large avatar-${avatarBorder}`} style={{
+            <div className="avatar-large" style={{
               width: '32px',
               height: '32px',
               borderRadius: '50%',
@@ -214,15 +300,6 @@ function TopBar({
               ) : (
                 <span style={{ fontSize: '16px' }}>{avatar || '🙂'}</span>
               )}
-
-              {avatarDecorations.slice(0, 2).map((d, i) => (
-                <span key={i} className={`decoration decoration-${i}`} style={{
-                  position: 'absolute',
-                  top: '-2px',
-                  right: '-2px',
-                  fontSize: '10px'
-                }}>{d}</span>
-              ))}
             </div>
           </button>
         </div>
@@ -238,7 +315,7 @@ function TopBar({
 
             <div className="mobile-menu-content">
               <div className="mobile-user-info">
-                              <div className={`avatar-large avatar-${avatarBorder}`} style={{
+                              <div className="avatar-large" style={{
                 width: '40px',
                 height: '40px',
                 borderRadius: '50%',
@@ -456,9 +533,59 @@ export default function App() {
   const tableState = useBalanceSync(socket)
   console.log('App.tsx: socket available:', !!socket, 'isConnected:', isConnected, 'connectionStatus:', connectionStatus)
 
+  // Asegurar que el scroll esté en la parte superior al cargar
+  React.useEffect(() => {
+    const resetScroll = () => {
+      // Resetear scroll del window
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+      
+      // También para cualquier contenedor con scroll
+      const scrollableElements = document.querySelectorAll('.lobby-main, .chat-dock, .chat-list, [style*="overflow"]')
+      scrollableElements.forEach(el => {
+        if (el instanceof HTMLElement) {
+          el.scrollTop = 0
+        }
+      })
+    }
+    
+    // Ejecutar en múltiples momentos para asegurar que funcione
+    resetScroll()
+    const timeout1 = setTimeout(resetScroll, 0)
+    const timeout2 = setTimeout(resetScroll, 50)
+    const timeout3 = setTimeout(resetScroll, 200)
+    
+    // También cuando la página esté completamente cargada
+    if (document.readyState === 'complete') {
+      resetScroll()
+    } else {
+      window.addEventListener('load', resetScroll, { once: true })
+    }
+    
+    return () => {
+      clearTimeout(timeout1)
+      clearTimeout(timeout2)
+      clearTimeout(timeout3)
+    }
+  }, [])
+
   // Estados de la aplicación
   const [rooms, setRooms] = React.useState<LobbyRoomSummary[]>([])
   const [roomId, setRoomId] = React.useState<string | null>(null)
+  
+  // Estados para búsqueda y filtros
+  const [roomSearch, setRoomSearch] = React.useState('')
+  const [roomFilters, setRoomFilters] = React.useState<{
+    status: 'all' | 'waiting' | 'playing'
+    sortBy: 'name' | 'players' | 'recent'
+  }>({ status: 'all', sortBy: 'recent' })
+  
+  // Estado para emoji picker en chat
+  const [showEmojiPicker, setShowEmojiPicker] = React.useState(false)
+  
+  // Estado para tabs del perfil
+  const [profileTab, setProfileTab] = React.useState<'profile' | 'stats' | 'achievements' | 'history'>('profile')
 
 
 
@@ -479,8 +606,6 @@ export default function App() {
     const savedName = localStorage.getItem('userName')
     return savedName || 'Player123'
   })
-  const [avatarDecorations, setAvatarDecorations] = React.useState<string[]>([])
-  const [avatarBorder, setAvatarBorder] = React.useState<string>('none')
   const [subscription, setSubscription] = React.useState<'free' | 'bronze' | 'silver' | 'gold' | 'diamond'>(() => {
     const savedSubscription = localStorage.getItem('userSubscription')
     console.log('💎 APP: Loading subscription from localStorage:', savedSubscription)
@@ -619,7 +744,7 @@ export default function App() {
   // Apariencia
   const [skin, setSkin] = React.useState<'green' | 'blue' | 'purple' | 'gold' | 'crystal' | 'red' | 'black' | 'rainbow' | 'neon' | 'sunset' | 'ocean' | 'lava' | 'ice' | 'forest' | 'royal' | 'galaxy' | 'diamond' | 'platinum' | 'emerald'>('green')
   const [theme, setTheme] = React.useState<
-    'casino' | 'beach' | 'space' | 'neon' | 'cyberpunk' | 'dark' | 'sunset' | 'matrix' | 'fire' | 'ocean'
+    'casino' | 'beach' | 'space' | 'neon' | 'cyberpunk' | 'dark' | 'sunset' | 'matrix' | 'fire' | 'ocean' | 'purple'
   >('casino')
 
   // Modal states
@@ -642,6 +767,7 @@ export default function App() {
       'theme-matrix',
       'theme-fire',
       'theme-ocean',
+      'theme-purple',
     ]
     all.forEach((c) => el.classList.remove(c))
     el.classList.add(`theme-${theme}`)
@@ -687,6 +813,38 @@ export default function App() {
     const id = setInterval(() => joinLobby(), 1800000) // 30 minutes instead of 5 minutes
     return () => clearInterval(id)
   }, [socket, joinLobby])
+
+  // Memoized filtered rooms for performance - MUST be before any conditional returns
+  const filteredRooms = React.useMemo(() => {
+    let result = [...rooms]
+
+    // Filtrar por búsqueda
+    if (roomSearch.trim()) {
+      result = result.filter(r =>
+        r.name.toLowerCase().includes(roomSearch.toLowerCase())
+      )
+    }
+
+    // Filtrar por estado
+    if (roomFilters.status !== 'all') {
+      result = result.filter(r => r.status === roomFilters.status)
+    }
+
+    // Ordenar
+    result.sort((a, b) => {
+      switch (roomFilters.sortBy) {
+        case 'name':
+          return a.name.localeCompare(b.name)
+        case 'players':
+          return b.players - a.players
+        case 'recent':
+        default:
+          return 0
+      }
+    })
+
+    return result
+  }, [rooms, roomSearch, roomFilters])
 
   if (!socket || !isConnected) {
     const statusMessage = connectionStatus === 'error' ? 'Connection failed. Retrying...' :
@@ -778,8 +936,6 @@ export default function App() {
         balance={myBalance}
         avatar={avatar}
         userName={userName}
-        avatarBorder={avatarBorder}
-        avatarDecorations={avatarDecorations}
         subscription={subscription}
         onCreate={openCreateRoomModal}
         onStore={() => setOpenStore(true)}
@@ -796,13 +952,18 @@ export default function App() {
       {/* Lobby */}
       <div className="lobby-grid">
         <div className="lobby-main mobile-layout">
-          {/* Crypto Prices */}
-          <CryptoPrices tablesAvailable={rooms.length} onLeaderboard={() => { getLeaderboard(); setOpenLb(true); }} />
+          {/* Casino Ads Carousel */}
+          <CasinoAdsCarousel tablesAvailable={rooms.length} onLeaderboard={() => { getLeaderboard(); setOpenLb(true); }} />
 
-          {/* Rooms */}
+          {/* Room Search & Filters */}
+          <RoomSearchFilters
+            onSearchChange={setRoomSearch}
+            onFilterChange={setRoomFilters}
+          />
+
+          {/* Rooms - Using memoized filteredRooms */}
           <div className="card-list">
-            {console.log('Rendering rooms:', rooms)}
-            {rooms.map((r) => (
+            {filteredRooms.map((r) => (
               <div key={r.roomId} className="room-card">
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
                   <div>
@@ -814,9 +975,8 @@ export default function App() {
                   <div className={`room-status ${r.status === 'waiting' ? 'waiting' : 'playing'}`}>{r.status === 'waiting' ? 'Waiting' : 'Playing'}</div>
                 </div>
 
-                <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 12, justifyContent: 'center' }}>
                   <button onClick={() => join(r.roomId)} className="pill">
-                    <span style={{ marginRight: 4 }}>🎯</span>
                     Join
                   </button>
                   <button
@@ -851,7 +1011,6 @@ export default function App() {
                       }, 600) // Aumentar delay para que la sincronización termine primero
                     }}
                   >
-                    <span style={{ marginRight: 4 }}>⚡</span>
                     Quick Start
                   </button>
                 </div>
@@ -865,7 +1024,7 @@ export default function App() {
                   {r.hasBots && <div className="av">🤖</div>}
                 </div>
               </div>
-            ))}
+              ))}
           </div>
         </div>
 
@@ -979,58 +1138,157 @@ export default function App() {
             className="box profile-modal"
             onClick={(e) => e.stopPropagation()}
             style={{
-              maxWidth: 720,
+              maxWidth: 900,
               width: '95%',
               maxHeight: '85vh',
               overflow: 'auto',
               borderRadius: 16,
-              padding: 16,
+              padding: 0,
+              background: 'rgba(0, 0, 0, 0.7)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <b>👤 User Profile</b>
-              <button onClick={() => setOpenProfile(false)}>✕</button>
+            {/* Header */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '24px 28px',
+              borderBottom: '2px solid rgba(255, 255, 255, 0.1)',
+              background: 'rgba(255, 255, 255, 0.02)'
+            }}>
+              <h2 style={{
+                margin: 0,
+                fontSize: '24px',
+                fontWeight: 800,
+                color: '#ffffff',
+                letterSpacing: '0.5px'
+              }}>
+                My Profile
+              </h2>
+              <button
+                onClick={() => setOpenProfile(false)}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  color: '#ffffff',
+                  fontSize: '20px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  (e.target as HTMLElement).style.background = 'rgba(255, 100, 100, 0.3)'
+                  ;(e.target as HTMLElement).style.transform = 'rotate(90deg) scale(1.1)'
+                }}
+                onMouseLeave={(e) => {
+                  (e.target as HTMLElement).style.background = 'rgba(255, 255, 255, 0.1)'
+                  ;(e.target as HTMLElement).style.transform = 'rotate(0deg) scale(1)'
+                }}
+              >
+                ✕
+              </button>
             </div>
 
+            {/* Tabs */}
+            <div className="profile-tabs">
+              <button
+                className={`profile-tab ${profileTab === 'profile' ? 'active' : ''}`}
+                onClick={() => setProfileTab('profile')}
+              >
+                Profile
+              </button>
+              <button
+                className={`profile-tab ${profileTab === 'stats' ? 'active' : ''}`}
+                onClick={() => setProfileTab('stats')}
+              >
+                Statistics
+              </button>
+              <button
+                className={`profile-tab ${profileTab === 'achievements' ? 'active' : ''}`}
+                onClick={() => setProfileTab('achievements')}
+              >
+                Achievements
+              </button>
+              <button
+                className={`profile-tab ${profileTab === 'history' ? 'active' : ''}`}
+                onClick={() => setProfileTab('history')}
+              >
+                History
+              </button>
+            </div>
 
+            {/* Content */}
+            <div style={{ padding: '28px' }}>
+              {profileTab === 'profile' && (
+                <div className="profile-tab-content">
+                  <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth <= 768 ? '1fr' : '280px 1fr', gap: '32px' }}>
+                {/* Left: Avatar Section */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  {/* Avatar Display */}
+                  <div
+                    style={{
+                      width: 160,
+                      height: 160,
+                      borderRadius: '50%',
+                      background: 'rgba(255,255,255,.08)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 80,
+                      overflow: 'hidden',
+                      marginBottom: 20,
+                      border: '3px solid rgba(255,255,255,.2)',
+                      boxShadow: '0 8px 24px rgba(0,0,0,0.3)'
+                    }}
+                  >
+                    {avatar && (avatar.startsWith('http') || avatar.startsWith('data:')) ? (
+                      <img
+                        src={avatar}
+                        alt="Avatar"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <span>{avatar}</span>
+                    )}
+                  </div>
 
-            <div style={{ display: 'flex', gap: 24, marginTop: 16, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-              {/* Avatar */}
-              <div style={{ flex: '0 0 220px', textAlign: 'center' }}>
-                <div
-                  style={{
-                    width: 140,
-                    height: 140,
-                    borderRadius: '50%',
-                    background: 'rgba(255,255,255,.08)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 70,
-                    overflow: 'hidden',
-                    marginBottom: 12,
-                    margin: '0 auto 12px',
-                    border: '2px solid rgba(255,255,255,.15)',
-                  }}
-                >
-                  {avatar && (avatar.startsWith('http') || avatar.startsWith('data:')) ? (
-                    <img
-                      src={avatar}
-                      alt="Avatar"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                  ) : (
-                    <span>{avatar}</span>
-                  )}
-                </div>
-
-                <div style={{ display: 'grid', gap: 8 }}>
+                  {/* Upload Button */}
                   <label
                     htmlFor="profile-upload"
-                    className="pill"
-                    style={{ textAlign: 'center', cursor: 'pointer', userSelect: 'none' }}
+                    style={{
+                      width: '100%',
+                      padding: '12px 20px',
+                      borderRadius: '10px',
+                      border: '2px solid rgba(255, 255, 255, 0.2)',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      color: '#ffffff',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      marginBottom: '20px'
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.target as HTMLElement).style.background = 'rgba(255, 255, 255, 0.1)'
+                      ;(e.target as HTMLElement).style.borderColor = 'rgba(255, 255, 255, 0.4)'
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.target as HTMLElement).style.background = 'rgba(255, 255, 255, 0.05)'
+                      ;(e.target as HTMLElement).style.borderColor = 'rgba(255, 255, 255, 0.2)'
+                    }}
                   >
-                    📤 Upload Image
+                    Upload Image
                   </label>
                   <input
                     id="profile-upload"
@@ -1045,9 +1303,7 @@ export default function App() {
                         const v = ev.target?.result as string
                         if (v) {
                           setAvatar(v)
-                          // Guardar en localStorage para persistencia
                           localStorage.setItem('selectedAvatar', v)
-                          // Enviar al servidor para sincronización con otros jugadores
                           if (socket && socket.connected) {
                             socket.emit(ClientEvents.UPDATE_AVATAR, v)
                           }
@@ -1058,7 +1314,29 @@ export default function App() {
                     }}
                   />
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 32px)', gap: 4, justifyContent: 'center', maxHeight: '120px', overflowY: 'auto' }}>
+                  {/* Emoji Avatars */}
+                  <div style={{ width: '100%', marginBottom: '20px' }}>
+                    <div style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      marginBottom: '10px',
+                      fontWeight: 600,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}>
+                      Emoji Avatars
+                    </div>
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(7, 1fr)',
+                      gap: 6,
+                      maxHeight: '140px',
+                      overflowY: 'auto',
+                      padding: '8px',
+                      background: 'rgba(0, 0, 0, 0.2)',
+                      borderRadius: '10px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)'
+                    }}>
                     {[
                       '👨', '👩', '🧑', '👴', '👵', '🧓', '👨‍💼', '👩‍💼', '👨‍🎓', '👩‍🎓',
                       '👨‍🔬', '👩‍🔬', '👨‍💻', '👩‍💻', '👨‍🍳', '👩‍🍳', '👨‍🎨', '👩‍🎨', '👨‍⚖️', '👩‍⚖️',
@@ -1095,28 +1373,60 @@ export default function App() {
                           addNotification('Avatar changed')
                         }}
                         style={{
-                          width: 32,
-                          height: 32,
-                          borderRadius: 8,
-                          border: '1px solid rgba(255,255,255,.2)',
-                          background: 'rgba(0,0,0,.3)',
+                          width: '100%',
+                          aspectRatio: '1',
+                          borderRadius: '8px',
+                          border: '2px solid rgba(255,255,255,.15)',
+                          background: avatar === e ? 'rgba(100, 200, 255, 0.2)' : 'rgba(0,0,0,.3)',
                           color: 'white',
                           fontSize: 18,
-                          lineHeight: '28px',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          padding: 0
+                        }}
+                        onMouseEnter={(e) => {
+                          if (avatar !== (e.target as HTMLElement).textContent) {
+                            (e.target as HTMLElement).style.borderColor = 'rgba(100, 200, 255, 0.5)'
+                            ;(e.target as HTMLElement).style.background = 'rgba(100, 200, 255, 0.1)'
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (avatar !== (e.target as HTMLElement).textContent) {
+                            (e.target as HTMLElement).style.borderColor = 'rgba(255,255,255,.15)'
+                            ;(e.target as HTMLElement).style.background = 'rgba(0,0,0,.3)'
+                          }
                         }}
                       >
                         {e}
                       </button>
                     ))}
+                    </div>
                   </div>
 
                   {/* GIF Avatars */}
-                  <div style={{ marginTop: 12 }}>
-                    <div style={{ fontSize: 12, opacity: 0.8, marginBottom: 6 }}>🎬 Animated GIFs</div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 34px)', gap: 6, justifyContent: 'center' }}>
+                  <div style={{ width: '100%' }}>
+                    <div style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      marginBottom: '10px',
+                      fontWeight: 600,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}>
+                      Animated GIFs
+                    </div>
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(5, 1fr)',
+                      gap: 8,
+                      padding: '8px',
+                      background: 'rgba(0, 0, 0, 0.2)',
+                      borderRadius: '10px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)'
+                    }}>
                       {[
                         'https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif', // Party popper
                         'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExemRscXBoMWFqODFobnNzeXo3d3Mwb3dnMTN6YXJ6ZmQ1ejIxOTBzZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/WLBCjqiUPFHPkvQUjy/giphy.gif', // Trophy
@@ -1138,30 +1448,36 @@ export default function App() {
                           key={`gif-${i}`}
                           title={`GIF Avatar ${i + 1}`}
                           onClick={() => {
-                                                        setAvatar(gifUrl)
+                            setAvatar(gifUrl)
                             // Guardar en localStorage para persistencia
                             localStorage.setItem('selectedAvatar', gifUrl)
-                                          // Enviar al servidor para sincronización con otros jugadores
-              if (socket && socket.connected) {
-                socket.emit(ClientEvents.UPDATE_AVATAR, gifUrl)
-              }
-                            addNotification('Animated avatar selected!')
+                            // Enviar al servidor para sincronización con otros jugadores
+                            if (socket && socket.connected) {
+                              socket.emit(ClientEvents.UPDATE_AVATAR, gifUrl)
+                            }
                           }}
                           style={{
-                            width: 34,
-                            height: 34,
-                            borderRadius: 8,
-                            border: '1px solid rgba(255,255,255,.2)',
-                            background: 'rgba(0,0,0,.3)',
+                            width: '100%',
+                            aspectRatio: '1',
+                            borderRadius: '8px',
+                            border: `2px solid ${avatar === gifUrl ? 'rgba(100,200,255,.6)' : 'rgba(255,255,255,.2)'}`,
+                            background: avatar === gifUrl ? 'rgba(100,200,255,.2)' : 'rgba(0,0,0,.3)',
                             overflow: 'hidden',
                             padding: 0,
-                            transition: 'border-color 0.2s ease',
+                            transition: 'all 0.2s ease',
+                            cursor: 'pointer'
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.borderColor = 'rgba(100,200,255,.6)'
+                            if (avatar !== gifUrl) {
+                              e.currentTarget.style.borderColor = 'rgba(100,200,255,.5)'
+                              e.currentTarget.style.background = 'rgba(100,200,255,.1)'
+                            }
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.borderColor = 'rgba(255,255,255,.2)'
+                            if (avatar !== gifUrl) {
+                              e.currentTarget.style.borderColor = 'rgba(255,255,255,.2)'
+                              e.currentTarget.style.background = 'rgba(0,0,0,.3)'
+                            }
                           }}
                         >
                           <img
@@ -1183,226 +1499,421 @@ export default function App() {
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Right side */}
-              <div style={{ flex: '1 1 360px', minWidth: 300 }}>
-                {/* Username */}
-                <div
-                  style={{
-                    marginBottom: 16,
-                    padding: 12,
-                    borderRadius: 12,
-                    border: '1px solid rgba(255,255,255,.12)',
-                    background: 'rgba(0,0,0,.25)',
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <b>Username</b>
-                    {!editingName && (
-                      <button className="pill" onClick={() => setEditingName(true)}>
-                        Edit
-                      </button>
+                {/* Right: User Info */}
+                <div>
+                  {/* Username Section */}
+                  <div
+                    style={{
+                      marginBottom: '24px',
+                      padding: '20px',
+                      borderRadius: '14px',
+                      border: '1px solid rgba(255,255,255,.1)',
+                      background: 'rgba(255, 255, 255, 0.03)',
+                    }}
+                  >
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '12px'
+                    }}>
+                      <div style={{
+                        fontSize: '13px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px'
+                      }}>
+                        Username
+                      </div>
+                      {!editingName && (
+                        <button
+                          className="pill"
+                          onClick={() => setEditingName(true)}
+                          style={{
+                            padding: '6px 14px',
+                            fontSize: '12px',
+                            fontWeight: 600
+                          }}
+                        >
+                          Edit
+                        </button>
+                      )}
+                    </div>
+
+                    {editingName ? (
+                      <div style={{ display: 'flex', gap: '10px' }}>
+                        <input
+                          type="text"
+                          value={newUserName}
+                          onChange={(e) => setNewUserName(e.target.value)}
+                          maxLength={20}
+                          style={{
+                            flex: 1,
+                            padding: '10px 14px',
+                            borderRadius: '10px',
+                            border: '2px solid rgba(255,255,255,.2)',
+                            background: 'rgba(0,0,0,.4)',
+                            color: '#ffffff',
+                            fontSize: '15px',
+                            outline: 'none'
+                          }}
+                        />
+                        <button
+                          className="pill"
+                          disabled={!newUserName.trim() || newUserName === userName}
+                          onClick={() => {
+                            if (newUserName.trim() && newUserName !== userName) {
+                              if (socket && socket.connected) {
+                                socket.emit(ClientEvents.UPDATE_USERNAME, newUserName.trim())
+                              }
+                              setUserName(newUserName.trim())
+                              localStorage.setItem('userName', newUserName.trim())
+                            }
+                            setEditingName(false)
+                          }}
+                          style={{
+                            padding: '10px 18px',
+                            fontSize: '13px',
+                            fontWeight: 600
+                          }}
+                        >
+                          Save
+                        </button>
+                        <button
+                          className="pill"
+                          onClick={() => {
+                            setNewUserName(userName)
+                            setEditingName(false)
+                          }}
+                          style={{
+                            padding: '10px 18px',
+                            fontSize: '13px',
+                            fontWeight: 600
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <div style={{
+                        fontSize: '20px',
+                        fontWeight: 700,
+                        color: '#ffffff',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}>
+                        {userName}
+                        {subscription && subscription !== 'free' && (
+                          <span style={{
+                            color: subscription === 'gold' || subscription === 'diamond' ? '#fbbf24' : '#60a5fa',
+                            fontSize: '18px',
+                            filter: subscription === 'gold' || subscription === 'diamond' ? 'drop-shadow(0 0 3px rgba(251, 191, 36, 0.6))' : 'drop-shadow(0 0 2px rgba(96, 165, 250, 0.4))'
+                          }}>
+                            {subscription === 'gold' || subscription === 'diamond' ? '👑' : '💎'}
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
 
-                  {editingName ? (
-                    <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                      <input
-                        type="text"
-                        value={newUserName}
-                        onChange={(e) => setNewUserName(e.target.value)}
-                        maxLength={20}
-                        style={{
-                          flex: 1,
-                          padding: '8px 10px',
-                          borderRadius: 8,
-                          border: '1px solid rgba(255,255,255,.2)',
-                          background: 'rgba(0,0,0,.4)',
-                          color: 'white',
-                        }}
-                      />
-                      <button
-                        className="pill"
-                        disabled={!newUserName.trim() || newUserName === userName}
-                        onClick={() => {
-                          if (newUserName.trim() && newUserName !== userName) {
-                            // Enviar al servidor para sincronización
-                            console.log('👤 USERNAME: About to send username update. Socket exists:', !!socket)
-                            console.log('👤 USERNAME: Socket connected:', socket?.connected)
-                            console.log('👤 USERNAME: Socket readyState:', socket?.readyState)
-                            if (socket && socket.connected) {
-                              console.log('👤 USERNAME: Sending UPDATE_USERNAME to server:', newUserName.trim())
-                              socket.emit(ClientEvents.UPDATE_USERNAME, newUserName.trim())
-                              console.log('👤 USERNAME: UPDATE_USERNAME emitted successfully')
-                              console.log('👤 CLIENT: Username updated to:', newUserName.trim())
-                            } else {
-                              console.log('👤 USERNAME: Socket not connected or not available')
-                              console.log('👤 USERNAME: Socket details:', {
-                                exists: !!socket,
-                                connected: socket?.connected,
-                                readyState: socket?.readyState,
-                                id: socket?.id
-                              })
-                            }
-                            setUserName(newUserName.trim())
-                            // Guardar en localStorage para persistencia
-                            localStorage.setItem('userName', newUserName.trim())
-                            addNotification(`✅ Username updated to ${newUserName.trim()}`)
-                          }
-                          setEditingName(false)
-                        }}
-                      >
-                        Save
-                      </button>
-                      <button
-                        className="pill"
-                        onClick={() => {
-                          setNewUserName(userName)
-                          setEditingName(false)
-                        }}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  ) : (
+                  {/* Balance & Credits */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, 1fr)',
+                    gap: '16px',
+                    marginBottom: '24px'
+                  }}>
                     <div style={{
-                      marginTop: 8,
-                      fontSize: 16,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '6px'
+                      padding: '18px',
+                      borderRadius: '14px',
+                      border: '1px solid rgba(255,255,255,.1)',
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      textAlign: 'center'
                     }}>
-                      {userName}
-                      {subscription && subscription !== 'free' && (
-                        <span style={{
-                          color: subscription === 'gold' || subscription === 'diamond' ? '#fbbf24' : '#60a5fa',
-                          fontSize: '16px',
-                          fontWeight: 'normal',
-                          verticalAlign: 'middle',
-                          lineHeight: '1',
-                          filter: subscription === 'gold' || subscription === 'diamond' ? 'drop-shadow(0 0 3px rgba(251, 191, 36, 0.6))' : 'drop-shadow(0 0 2px rgba(96, 165, 250, 0.4))'
-                        }}>
-                          {subscription === 'gold' || subscription === 'diamond' ? '👑' : '💎'}
-                        </span>
-                      )}
+                      <div style={{
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        marginBottom: '8px',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px'
+                      }}>
+                        Game Balance
+                      </div>
+                      <div style={{
+                        fontSize: '24px',
+                        fontWeight: 800,
+                        color: '#4ade80',
+                        textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                      }}>
+                        ${myBalance.toLocaleString()}
+                      </div>
                     </div>
-                  )}
-                </div>
-
-                {/* Decorations / Border */}
-                <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                  <div
-                    style={{
-                      flex: '1 1 160px',
-                      padding: 12,
-                      borderRadius: 12,
-                      border: '1px solid rgba(255,255,255,.12)',
-                      background: 'rgba(0,0,0,.25)',
-                    }}
-                  >
-                    <div style={{ marginBottom: 8 }}>
-                      <b>Border</b>
-                    </div>
-                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                      {['none', 'gold', 'rainbow'].map((b) => (
-                        <button
-                          key={b}
-                          className="pill"
-                          style={{
-                            backgroundColor: avatarBorder === b ? 'rgba(100,200,255,0.3)' : undefined,
-                            border: avatarBorder === b ? '1px solid rgba(100,200,255,0.6)' : undefined
-                          }}
-                          onClick={() => {
-                            setAvatarBorder(b)
-                            addNotification(`Border: ${b}`)
-                            console.log('Border changed to:', b) // Debug
-                          }}
-                        >
-                          {b}
-                        </button>
-                      ))}
+                    <div style={{
+                      padding: '18px',
+                      borderRadius: '14px',
+                      border: '1px solid rgba(255,255,255,.1)',
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      textAlign: 'center'
+                    }}>
+                      <div style={{
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        marginBottom: '8px',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px'
+                      }}>
+                        Store Credits
+                      </div>
+                      <div style={{
+                        fontSize: '24px',
+                        fontWeight: 800,
+                        color: '#ffd700',
+                        textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                      }}>
+                        {storeCredits.toLocaleString()}
+                      </div>
                     </div>
                   </div>
 
-                  <div
-                    style={{
-                      flex: '1 1 160px',
-                      padding: 12,
-                      borderRadius: 12,
-                      border: '1px solid rgba(255,255,255,.12)',
-                      background: 'rgba(0,0,0,.25)',
-                    }}
-                  >
-                    <div style={{ marginBottom: 8 }}>
-                      <b>Decorations</b>
+                  {/* Statistics */}
+                  <div style={{
+                    padding: '20px',
+                    borderRadius: '14px',
+                    border: '1px solid rgba(255,255,255,.1)',
+                    background: 'rgba(255, 255, 255, 0.03)',
+                  }}>
+                    <div style={{
+                      fontSize: '13px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      marginBottom: '16px',
+                      fontWeight: 600,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}>
+                      Account Statistics
                     </div>
-                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                      {['👑', '💎', '🔥', '⚡', '⭐'].map((d) => (
-                        <button
-                          key={d}
-                          className="pill"
-                          onClick={() => {
-                            setAvatarDecorations((prev) =>
-                              prev.includes(d) ? prev : [...prev, d],
-                            )
-                            addNotification(`+ ${d}`)
-                          }}
-                        >
-                          {d}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Stats */}
-                <div
-                  style={{
-                    marginTop: 16,
-                    padding: 12,
-                    borderRadius: 12,
-                    border: '1px solid rgba(255,255,255,.12)',
-                    background: 'rgba(0,0,0,.25)',
-                  }}
-                >
-                  <b>Account Statistics</b>
-                  <div
-                    style={{
+                    <div style={{
                       display: 'grid',
-                      gridTemplateColumns: 'repeat(2, minmax(0,1fr))',
-                      gap: 12,
-                      marginTop: 10,
-                    }}
-                  >
-                    <div className="stat">
-                      <div>💰 Earnings</div>
-                      <div>${playerStats.totalEarnings.toLocaleString()}</div>
-                    </div>
-                    <div className="stat">
-                      <div>📈 Win Rate</div>
-                      <div>{playerStats.winRate}%</div>
-                    </div>
-                    <div className="stat">
-                      <div>🃏 Games</div>
-                      <div>{playerStats.gamesPlayed}</div>
-                    </div>
-                    <div className="stat">
-                      <div>🎯 Wins</div>
-                      <div>{playerStats.gamesWon}</div>
+                      gridTemplateColumns: 'repeat(2, 1fr)',
+                      gap: '16px'
+                    }}>
+                      <div style={{
+                        padding: '14px',
+                        borderRadius: '10px',
+                        background: 'rgba(0, 0, 0, 0.2)',
+                        border: '1px solid rgba(255,255,255,.05)'
+                      }}>
+                        <div style={{
+                          fontSize: '11px',
+                          color: 'rgba(255, 255, 255, 0.5)',
+                          marginBottom: '6px',
+                          fontWeight: 600,
+                          textTransform: 'uppercase'
+                        }}>
+                          Earnings
+                        </div>
+                        <div style={{
+                          fontSize: '20px',
+                          fontWeight: 700,
+                          color: '#4ade80'
+                        }}>
+                          ${playerStats.totalEarnings.toLocaleString()}
+                        </div>
+                      </div>
+                      <div style={{
+                        padding: '14px',
+                        borderRadius: '10px',
+                        background: 'rgba(0, 0, 0, 0.2)',
+                        border: '1px solid rgba(255,255,255,.05)'
+                      }}>
+                        <div style={{
+                          fontSize: '11px',
+                          color: 'rgba(255, 255, 255, 0.5)',
+                          marginBottom: '6px',
+                          fontWeight: 600,
+                          textTransform: 'uppercase'
+                        }}>
+                          Win Rate
+                        </div>
+                        <div style={{
+                          fontSize: '20px',
+                          fontWeight: 700,
+                          color: '#60a5fa'
+                        }}>
+                          {playerStats.winRate}%
+                        </div>
+                      </div>
+                      <div style={{
+                        padding: '14px',
+                        borderRadius: '10px',
+                        background: 'rgba(0, 0, 0, 0.2)',
+                        border: '1px solid rgba(255,255,255,.05)'
+                      }}>
+                        <div style={{
+                          fontSize: '11px',
+                          color: 'rgba(255, 255, 255, 0.5)',
+                          marginBottom: '6px',
+                          fontWeight: 600,
+                          textTransform: 'uppercase'
+                        }}>
+                          Games Played
+                        </div>
+                        <div style={{
+                          fontSize: '20px',
+                          fontWeight: 700,
+                          color: '#ffffff'
+                        }}>
+                          {playerStats.gamesPlayed}
+                        </div>
+                      </div>
+                      <div style={{
+                        padding: '14px',
+                        borderRadius: '10px',
+                        background: 'rgba(0, 0, 0, 0.2)',
+                        border: '1px solid rgba(255,255,255,.05)'
+                      }}>
+                        <div style={{
+                          fontSize: '11px',
+                          color: 'rgba(255, 255, 255, 0.5)',
+                          marginBottom: '6px',
+                          fontWeight: 600,
+                          textTransform: 'uppercase'
+                        }}>
+                          Wins
+                        </div>
+                        <div style={{
+                          fontSize: '20px',
+                          fontWeight: 700,
+                          color: '#fbbf24'
+                        }}>
+                          {playerStats.gamesWon}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+                </div>
+              )}
+
+            {profileTab === 'stats' && (
+              <div className="profile-tab-content">
+                <h3 style={{ color: '#ffffff', marginBottom: '20px', fontSize: '20px', fontWeight: 700 }}>Statistics</h3>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '16px'
+                }}>
+                  <div style={{
+                    padding: '20px',
+                    borderRadius: '12px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                  }}>
+                    <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '8px' }}>Total Earnings</div>
+                    <div style={{ fontSize: '24px', fontWeight: 700, color: '#4ade80' }}>
+                      ${playerStats.totalEarnings.toLocaleString()}
+                    </div>
+                  </div>
+                  <div style={{
+                    padding: '20px',
+                    borderRadius: '12px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                  }}>
+                    <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '8px' }}>Win Rate</div>
+                    <div style={{ fontSize: '24px', fontWeight: 700, color: '#60a5fa' }}>
+                      {playerStats.winRate}%
+                    </div>
+                  </div>
+                  <div style={{
+                    padding: '20px',
+                    borderRadius: '12px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                  }}>
+                    <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '8px' }}>Games Played</div>
+                    <div style={{ fontSize: '24px', fontWeight: 700, color: '#ffffff' }}>
+                      {playerStats.gamesPlayed}
+                    </div>
+                  </div>
+                  <div style={{
+                    padding: '20px',
+                    borderRadius: '12px',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                  }}>
+                    <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '8px' }}>Games Won</div>
+                    <div style={{ fontSize: '24px', fontWeight: 700, color: '#fbbf24' }}>
+                      {playerStats.gamesWon}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {profileTab === 'achievements' && (
+              <div className="profile-tab-content">
+                <h3 style={{ color: '#ffffff', marginBottom: '20px', fontSize: '20px', fontWeight: 700 }}>Achievements</h3>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+                  gap: '16px'
+                }}>
+                  {[
+                    { name: 'First Win', icon: '🏆', unlocked: playerStats.gamesWon > 0 },
+                    { name: 'High Roller', icon: '💰', unlocked: myBalance > 5000 },
+                    { name: 'Veteran', icon: '🎖️', unlocked: playerStats.gamesPlayed > 50 },
+                    { name: 'Champion', icon: '👑', unlocked: playerStats.winRate > 60 }
+                  ].map((achievement, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        padding: '20px',
+                        borderRadius: '12px',
+                        background: achievement.unlocked ? 'rgba(84, 255, 138, 0.1)' : 'rgba(0, 0, 0, 0.3)',
+                        border: `1px solid ${achievement.unlocked ? 'rgba(84, 255, 138, 0.3)' : 'rgba(255, 255, 255, 0.1)'}`,
+                        textAlign: 'center',
+                        opacity: achievement.unlocked ? 1 : 0.5
+                      }}
+                    >
+                      <div style={{ fontSize: '40px', marginBottom: '8px' }}>{achievement.icon}</div>
+                      <div style={{ fontSize: '14px', color: '#ffffff', fontWeight: 600 }}>{achievement.name}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {profileTab === 'history' && (
+              <div className="profile-tab-content">
+                <h3 style={{ color: '#ffffff', marginBottom: '20px', fontSize: '20px', fontWeight: 700 }}>Recent Games</h3>
+                <div style={{
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)'
+                }}>
+                  <div style={{ color: 'rgba(255, 255, 255, 0.6)', textAlign: 'center', padding: '40px' }}>
+                    Game history will be displayed here
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* little toast area */}
             {notifications.length > 0 && (
-              <div style={{ marginTop: 16, opacity: 0.8, fontSize: 12, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif' }}>
+              <div style={{ marginTop: 16, opacity: 0.8, fontSize: 12, fontFamily: `-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif` }}>
                 {notifications[0]}
               </div>
             )}
           </div>
+        </div>
         </div>
       )}
 
@@ -1412,23 +1923,32 @@ export default function App() {
           <div className="box" onClick={(e) => e.stopPropagation()} style={{
             maxWidth: '500px',
             width: '90%',
-            padding: '20px',
+            padding: '24px',
             borderRadius: '16px',
-            background: 'linear-gradient(135deg, rgba(84,255,138,0.1), rgba(0,160,255,0.05))',
-            border: '2px solid rgba(84,255,138,0.2)',
-            backdropFilter: 'blur(15px)'
+            background: 'linear-gradient(135deg, rgba(0,0,0,0.85), rgba(20,20,20,0.9))',
+            border: '2px solid rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(20px)',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.7)'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ margin: 0, color: '#54ff8a', fontSize: '24px', fontWeight: '900' }}>🎲 Create Table</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ margin: 0, color: '#ffffff', fontSize: '24px', fontWeight: '800', fontFamily: 'inherit' }}>Create Table</h2>
               <button
                 onClick={() => setOpenCreateRoom(false)}
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#54ff8a',
-                  fontSize: '24px',
+                  background: 'rgba(255,255,255,0.1)',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  color: '#ffffff',
+                  fontSize: '20px',
                   cursor: 'pointer',
-                  padding: '4px'
+                  padding: '6px 10px',
+                  borderRadius: '8px',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.2)'
+                }}
+                onMouseLeave={(e) => {
+                  (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.1)'
                 }}
               >
                 ✕
@@ -1445,22 +1965,32 @@ export default function App() {
                   placeholder="Table name..."
                   maxLength={20}
                   style={{
-                    width: '180px',
-                    padding: '6px 10px',
-                    borderRadius: '4px',
-                    border: '2px solid rgba(84,255,138,0.2)',
-                    background: 'rgba(0,0,0,0.3)',
-                    color: '#eaf5ea',
-                    fontSize: '13px',
-                    outline: 'none'
+                    width: '100%',
+                    padding: '12px 14px',
+                    borderRadius: '10px',
+                    border: '2px solid rgba(255,255,255,0.1)',
+                    background: 'rgba(0,0,0,0.4)',
+                    color: '#ffffff',
+                    fontSize: '14px',
+                    outline: 'none',
+                    transition: 'all 0.2s ease',
+                    fontFamily: 'inherit'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = 'rgba(255,255,255,0.3)'
+                    e.target.style.background = 'rgba(0,0,0,0.6)'
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255,255,255,0.1)'
+                    e.target.style.background = 'rgba(0,0,0,0.4)'
                   }}
                 />
               </div>
 
               {/* Single Blind Amount Slider */}
               <div>
-                <label style={{ display: 'block', marginBottom: '8px', color: '#eaf5ea', fontWeight: '600' }}>
-                  💰 Blind Amount: <span style={{ color: '#54ff8a' }}>${bb}</span>
+                <label style={{ display: 'block', marginBottom: '10px', color: '#ffffff', fontWeight: '600', fontSize: '14px', fontFamily: 'inherit' }}>
+                  Blind Amount: <span style={{ color: '#ffd700' }}>${bb}</span>
                 </label>
                 <input
                   type="range"
@@ -1476,12 +2006,13 @@ export default function App() {
                     width: '100%',
                     height: '8px',
                     borderRadius: '4px',
-                    background: 'linear-gradient(to right, #54ff8a, #00a0ff, #ffd700)',
+                    background: 'rgba(255,255,255,0.1)',
                     outline: 'none',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    accentColor: '#ffd700'
                   }}
                 />
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', fontSize: '12px', color: '#888' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px', fontSize: '12px', color: 'rgba(255,255,255,0.6)', fontFamily: 'inherit' }}>
                   <span>$5</span>
                   <span>$100</span>
                 </div>
@@ -1490,62 +2021,83 @@ export default function App() {
               {/* Seats and Bots - Simplified */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: '#eaf5ea', fontWeight: '600' }}>👥</span>
                   <select
                     value={seats}
                     onChange={(e) => setSeats(Number(e.target.value))}
                     style={{
-                      padding: '6px 8px',
-                      borderRadius: '4px',
-                      border: '2px solid rgba(84,255,138,0.2)',
-                      background: 'rgba(0,0,0,0.3)',
-                      color: '#eaf5ea',
+                      padding: '10px 12px',
+                      borderRadius: '10px',
+                      border: '2px solid rgba(255,255,255,0.1)',
+                      background: 'rgba(0,0,0,0.4)',
+                      color: '#ffffff',
                       fontSize: '14px',
-                      outline: 'none'
+                      outline: 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      fontFamily: 'inherit'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = 'rgba(255,255,255,0.3)'
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = 'rgba(255,255,255,0.1)'
                     }}
                   >
                     {[2,3,4,5].map(num => (
-                      <option key={num} value={num} style={{ background: '#1a1a1a', color: '#eaf5ea' }}>{num}</option>
+                      <option key={num} value={num} style={{ background: '#1a1a1a', color: '#ffffff' }}>{num}</option>
                     ))}
                   </select>
-                  <span style={{ color: '#888', fontSize: '12px' }}>seats</span>
+                  <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', fontFamily: 'inherit' }}>seats</span>
                 </div>
 
                 <label style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  color: '#eaf5ea',
+                  gap: '8px',
+                  color: '#ffffff',
                   fontWeight: '600',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  fontSize: '14px'
                 }}>
                   <input
                     type="checkbox"
                     checked={withBots}
                     onChange={(e) => setWithBots(e.target.checked)}
                     style={{
-                      width: '16px',
-                      height: '16px',
-                      accentColor: '#54ff8a'
+                      width: '18px',
+                      height: '18px',
+                      accentColor: '#ffd700',
+                      cursor: 'pointer'
                     }}
                   />
-                  🤖 Bots
+                  Bots
                 </label>
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
               <button
                 onClick={() => setOpenCreateRoom(false)}
                 style={{
-                  padding: '12px 18px',
-                  borderRadius: '8px',
+                  padding: '12px 20px',
+                  borderRadius: '10px',
                   border: '2px solid rgba(255,255,255,0.2)',
-                  background: 'transparent',
-                  color: '#eaf5ea',
+                  background: 'rgba(255,255,255,0.05)',
+                  color: '#ffffff',
                   fontWeight: '600',
                   cursor: 'pointer',
-                  transition: 'all 0.3s ease'
+                  transition: 'all 0.3s ease',
+                  fontFamily: 'inherit',
+                  fontSize: '14px'
+                }}
+                onMouseEnter={(e) => {
+                  (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.1)'
+                  ;(e.target as HTMLElement).style.borderColor = 'rgba(255,255,255,0.3)'
+                }}
+                onMouseLeave={(e) => {
+                  (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.05)'
+                  ;(e.target as HTMLElement).style.borderColor = 'rgba(255,255,255,0.2)'
                 }}
               >
                 Cancel
@@ -1554,18 +2106,27 @@ export default function App() {
                 onClick={handleCreateRoom}
                 style={{
                   padding: '12px 24px',
-                  borderRadius: '8px',
+                  borderRadius: '10px',
                   border: 'none',
-                  background: 'linear-gradient(135deg, #54ff8a, #00a0ff)',
-                  color: '#0a1a0f',
-                  fontWeight: '900',
+                  background: 'linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,165,0,0.9))',
+                  color: '#ffffff',
+                  fontWeight: '800',
                   cursor: 'pointer',
-                  fontSize: '16px',
-                  boxShadow: '0 4px 15px rgba(84,255,138,0.3)',
-                  transition: 'all 0.3s ease'
+                  fontSize: '15px',
+                  boxShadow: '0 4px 15px rgba(255,215,0,0.4)',
+                  transition: 'all 0.3s ease',
+                  fontFamily: 'inherit'
+                }}
+                onMouseEnter={(e) => {
+                  (e.target as HTMLElement).style.transform = 'translateY(-2px)'
+                  ;(e.target as HTMLElement).style.boxShadow = '0 6px 20px rgba(255,215,0,0.5)'
+                }}
+                onMouseLeave={(e) => {
+                  (e.target as HTMLElement).style.transform = 'translateY(0)'
+                  ;(e.target as HTMLElement).style.boxShadow = '0 4px 15px rgba(255,215,0,0.4)'
                 }}
               >
-                ⚡ Create Table
+                Create Table
               </button>
             </div>
           </div>

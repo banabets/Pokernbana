@@ -39,10 +39,12 @@ const Backdrop = styled.div<{ $img?: string }>`
   position: fixed;
   inset: 0;
   background:
+    radial-gradient(ellipse 200% 100% at 50% 0%, #0a1a0f 0%, #0d2518 25%, #0f2a1d 50%, #0a1a0f 100%),
     radial-gradient(120% 80% at 50% 20%, rgba(0,0,0,.15), rgba(0,0,0,.55) 75%),
     url(${p => p.$img || ''}) center / cover no-repeat;
   z-index: 0;
   pointer-events: none;
+  background-attachment: fixed;
 `
 
 const ChipDot = styled.div`
@@ -515,7 +517,6 @@ export default function Table({
   skin?: 'green' | 'blue' | 'purple' | 'gold' | 'crystal' | 'red' | 'black' | 'rainbow' | 'neon' | 'sunset' | 'ocean' | 'lava' | 'ice' | 'forest' | 'royal' | 'galaxy' | 'diamond' | 'platinum' | 'emerald',
   subscription?: 'free' | 'bronze' | 'silver' | 'gold' | 'diamond'
 }) {
-  console.log('🎭 TABLE: Component rendered with selectedAvatar:', selectedAvatar)
   const [state, setState] = React.useState<TableState | null>(null)
   const [isSeated, setIsSeated] = React.useState(false)
 
@@ -651,7 +652,7 @@ export default function Table({
 
   React.useEffect(()=> () => { prevRef.current = null; prevDealRef.current = null }, [])
 
-  // fichas → POT
+  // fichas → POT (optimized with requestAnimationFrame)
   React.useEffect(()=>{
     if (!state || !prevRef.current) { prevRef.current = state; return }
     const prev = prevRef.current
@@ -665,7 +666,10 @@ export default function Table({
         const id = Math.random().toString(36).slice(2)
         const chip = {id, left:p.left, top:p.top, toLeft:50, toTop:POT_TOP + 2}
         setChips(c=>[...c, chip])
-        setTimeout(()=> setChips(c=> c.map(x=> x.id===id ? ({...x, left:x.toLeft, top:x.toTop}) : x)), 30)
+        // Use RAF for smoother animation start
+        requestAnimationFrame(() => {
+          setChips(c=> c.map(x=> x.id===id ? ({...x, left:x.toLeft, top:x.toTop}) : x))
+        })
         setTimeout(()=> setChips(c=>c.filter(x=>x.id!==id)), 800)
       }
     }
@@ -840,6 +844,27 @@ export default function Table({
 
   function startHand() { socket.emit(ClientEvents.START_HAND, { roomId }) }
 
+  // === HOOKS MUST BE BEFORE ANY CONDITIONAL RETURNS ===
+  type Denom = 5|10|25|50|100|500|1000
+  const DENOMS: Denom[] = [1000, 500, 100, 50, 25, 10, 5]
+
+  // Memoized chip calculation for performance
+  const chipsForAmount = React.useCallback((amount: number): Denom[] => {
+    const out: Denom[] = []
+    let rest = Math.max(0, Math.floor(amount))
+    for (const d of DENOMS) {
+      const cnt = Math.floor(rest / d)
+      for (let i=0;i<cnt;i++) out.push(d)
+      rest -= cnt * d
+    }
+    if (rest > 0) out.push(5)
+    out.sort((a,b)=>a-b)
+    return out
+  }, [])
+
+  // Memoized pot tokens - use 0 if state is null
+  const potTokens = React.useMemo(() => chipsForAmount(state?.pot ?? 0), [state?.pot, chipsForAmount])
+
   if (!state) {
     return (
       <div style={{padding:12}}>
@@ -858,14 +883,7 @@ export default function Table({
   const mySeat = myId ? state.players.find(p => p.id === myId) : undefined
   const myName = mySeat?.name
 
-  console.log('🎮 PLAYER INFO:', {
-    myId: myId || 'null',
-    mySeat: mySeat?.seat,
-    myName,
-    totalPlayers: state.players.length,
-    isSeated,
-    players: state.players.map(p => ({ id: p.id, name: p.name, seat: p.seat }))
-  })
+  // Debug info removed for performance
 
   // Mostrar TODAS las sillas (1-5) incluso las vacías
   const allSeats = Array.from({ length: state.seats }, (_, i) => {
@@ -914,102 +932,22 @@ export default function Table({
             )
           })()
         ) : (
-          // Silla vacía - mostrar silla clickable
+          // Silla vacía - mostrar silla clickable (CSS hover for performance)
           <div
+            className={myId ? 'empty-seat empty-seat--active' : 'empty-seat'}
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
 
-              console.log(`🖱️ SEAT ${seatNumber} CLICKED`)
-              console.log(`🔍 DEBUG INFO:`, {
-                seatNumber,
-                myId: myId || 'NULL',
-                isSeated,
-                socketConnected: socket?.connected,
-                socketId: socket?.id,
-                hasState: !!state,
-                playersCount: state?.players?.length || 0
-              })
+              if (!myId || !socket?.connected) return
 
-              if (!myId) {
-                console.log('❌ BLOCKED: No socket connection (myId is null)')
-                return
-              }
-
-              if (!socket?.connected) {
-                console.log('❌ BLOCKED: Socket not connected')
-                return
-              }
-
-              if (isSeated) {
-                console.log(`🔄 CHANGING: Player moving to seat ${seatNumber}`)
-              } else {
-                console.log(`🆕 SITTING: Player sitting on seat ${seatNumber}`)
-              }
-
-              // Actualizar estado local
               setIsSeated(true)
-              console.log('✅ LOCAL STATE: setIsSeated(true) completed')
-
-              // Cambiar asiento real en el servidor
-              console.log('🎯 REQUESTING: Seat change to server')
-              console.log('🎯 EMITTING: changeSeat with:', { roomId, seatNumber })
               socket.emit('changeSeat', { roomId, seatNumber })
-              console.log('✅ EMITTED: changeSeat event sent')
-
-              // TODO: Implementar cambio de asiento real en el servidor
-              // changeSeat(roomId, seatNumber)
-            }}
-            style={{
-              width: 'clamp(60px, 12vw, 80px)',
-              height: 'clamp(60px, 12vw, 80px)',
-              borderRadius: '50%',
-              background: myId ? 'rgba(84, 255, 138, 0.3)' : 'rgba(84, 255, 138, 0.1)',
-              border: myId ? '2px solid #54ff8a' : '2px solid rgba(84, 255, 138, 0.3)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: myId ? 'pointer' : 'default',
-              transition: 'all 0.2s ease',
-              boxShadow: myId ? '0 0 15px rgba(84, 255, 138, 0.4)' : 'none',
-              padding: 'var(--spacing-xs)',
-            }}
-            onMouseEnter={(e) => {
-              if (myId) {
-                e.currentTarget.style.transform = 'scale(1.1)'
-                e.currentTarget.style.boxShadow = '0 0 20px rgba(84, 255, 138, 0.6)'
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (myId) {
-                e.currentTarget.style.transform = 'scale(1)'
-                e.currentTarget.style.boxShadow = '0 0 15px rgba(84, 255, 138, 0.4)'
-              }
             }}
           >
-            <div style={{
-              textAlign: 'center',
-              color: myId ? '#54ff8a' : 'rgba(84, 255, 138, 0.5)',
-              fontSize: 'clamp(10px, 3vw, 12px)',
-              fontWeight: 'bold',
-              lineHeight: '1.2',
-            }}>
-              <div style={{
-                fontSize: 'clamp(14px, 4vw, 18px)',
-                marginBottom: 'var(--spacing-xs)'
-              }}>🎲</div>
-              <div>{seatNumber}</div>
-
-              {/* Debug info - solo mostrar en desktop */}
-              <div style={{
-                fontSize: 'clamp(6px, 2vw, 8px)',
-                opacity: 0.6,
-                marginTop: 'var(--spacing-xs)',
-                display: 'none'
-              }}>
-                myId: {myId ? myId.slice(0, 4) : 'null'}
-              </div>
+            <div className="empty-seat__content">
+              <div className="empty-seat__icon">🎲</div>
+              <div className="empty-seat__number">{seatNumber}</div>
             </div>
           </div>
         )}
@@ -1017,23 +955,7 @@ export default function Table({
     )
   })
 
-  type Denom = 5|10|25|50|100|500|1000
-  const DENOMS: Denom[] = [1000, 500, 100, 50, 25, 10, 5]
-
-  function chipsForAmount(amount: number): Denom[] {
-    const out: Denom[] = []
-    let rest = Math.max(0, Math.floor(amount))
-    for (const d of DENOMS) {
-      const cnt = Math.floor(rest / d)
-      for (let i=0;i<cnt;i++) out.push(d)
-      rest -= cnt * d
-    }
-    if (rest > 0) out.push(5)
-    out.sort((a,b)=>a-b)
-    return out
-  }
-
-  const potTokens = chipsForAmount(state.pot)
+  // Pot display configuration
   const COLS = 3, ROWS = 6
   const CAPACITY = COLS * ROWS
   const needsOverflow = potTokens.length > CAPACITY

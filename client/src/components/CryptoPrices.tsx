@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 interface CryptoData {
   [key: string]: {
@@ -14,17 +14,77 @@ interface CryptoInfo {
   icon: string
 }
 
+interface PriceHistory {
+  [key: string]: number[]
+}
+
 const SERVER_URL = ''
 
 const CRYPTO_LIST: CryptoInfo[] = [
   { id: 'solana', symbol: 'SOL', name: 'SOL', icon: '◎' },
   { id: 'bitcoin', symbol: 'BTC', name: 'BTC', icon: '₿' },
-  { id: 'ethereum', symbol: 'ETH', name: 'ETH', icon: 'Ξ' },
-  { id: 'litecoin', symbol: 'LTC', name: 'LTC', icon: 'Ł' }
+  { id: 'ethereum', symbol: 'ETH', name: 'ETH', icon: 'Ξ' }
 ]
+
+// Componente de mini gráfico (sparkline)
+const MiniChart: React.FC<{ data: number[]; isPositive: boolean }> = ({ data, isPositive }) => {
+  const svgRef = useRef<SVGSVGElement>(null)
+  const width = 60
+  const height = 24
+  const padding = 2
+
+  if (!data || data.length < 2) {
+    return <div style={{ width, height, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.5 }}>--</div>
+  }
+
+  // Determinar si el precio está subiendo basándose en la tendencia
+  // Comparar el último precio con el primero
+  const firstPrice = data[0]
+  const lastPrice = data[data.length - 1]
+  const isRising = lastPrice >= firstPrice
+
+  // Normalizar los datos para que quepan en el gráfico
+  const min = Math.min(...data)
+  const max = Math.max(...data)
+  const range = max - min || 1 // Evitar división por cero
+
+  const points = data.map((value, index) => {
+    const x = padding + (index / (data.length - 1)) * (width - padding * 2)
+    const y = height - padding - ((value - min) / range) * (height - padding * 2)
+    return `${x},${y}`
+  }).join(' ')
+
+  // Usar verde si el precio está subiendo, rojo si está bajando
+  const color = isRising ? '#22c55e' : '#ef4444'
+
+  return (
+    <svg
+      ref={svgRef}
+      width={width}
+      height={height}
+      style={{ display: 'block' }}
+    >
+      <polyline
+        points={points}
+        fill="none"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* Relleno del área bajo la línea */}
+      <polygon
+        points={`${padding},${height - padding} ${points} ${width - padding},${height - padding}`}
+        fill={color}
+        fillOpacity="0.1"
+      />
+    </svg>
+  )
+}
 
 const CryptoPrices: React.FC<{ tablesAvailable: number; onLeaderboard?: () => void }> = ({ tablesAvailable, onLeaderboard }) => {
   const [cryptoData, setCryptoData] = useState<CryptoData>({})
+  const [priceHistory, setPriceHistory] = useState<PriceHistory>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
@@ -44,6 +104,22 @@ const CryptoPrices: React.FC<{ tablesAvailable: number; onLeaderboard?: () => vo
       const data: CryptoData = await response.json()
       setCryptoData(data)
       setLastUpdate(new Date())
+      
+      // Actualizar historial de precios para los gráficos
+      setPriceHistory(prev => {
+        const newHistory: PriceHistory = { ...prev }
+        CRYPTO_LIST.forEach(crypto => {
+          if (data[crypto.id]) {
+            if (!newHistory[crypto.id]) {
+              newHistory[crypto.id] = []
+            }
+            // Mantener solo los últimos 20 puntos
+            newHistory[crypto.id] = [...newHistory[crypto.id], data[crypto.id].usd].slice(-20)
+          }
+        })
+        return newHistory
+      })
+      
       console.log('💰 CRYPTO: Prices updated via backend proxy:', data)
     } catch (err) {
       console.error('💰 CRYPTO: Error fetching prices:', err)
@@ -91,14 +167,12 @@ const CryptoPrices: React.FC<{ tablesAvailable: number; onLeaderboard?: () => vo
     <div className="lb-preview">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <b className="lb-title">💰 Crypto Prices</b>
-          <div style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: 2, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif' }}>
-            {lastUpdate && (
-              <span>Last update: {lastUpdate.toLocaleTimeString()}</span>
-            )}
-            {!lastUpdate && loading && <span>Loading...</span>}
-            {error && <span style={{ color: '#ef4444' }}>{error}</span>}
-            <br />
+          <div style={{ 
+            fontSize: '16px', 
+            fontWeight: '700', 
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif',
+            color: '#ffffff'
+          }}>
             {tablesAvailable} tables available
           </div>
         </div>
@@ -107,7 +181,7 @@ const CryptoPrices: React.FC<{ tablesAvailable: number; onLeaderboard?: () => vo
           onClick={() => onLeaderboard && onLeaderboard()}
           style={{ fontSize: '12px' }}
         >
-          🏆 View Leaderboard
+          View Leaderboard
         </button>
       </div>
 
@@ -154,8 +228,14 @@ const CryptoPrices: React.FC<{ tablesAvailable: number; onLeaderboard?: () => vo
                   <div className="crypto-icon">{crypto.icon}</div>
                   <div className="crypto-name">{crypto.symbol}</div>
                 </div>
-                <div className="crypto-price">
-                  {formatPrice(data.usd)}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', marginBottom: '2px' }}>
+                  <div className="crypto-price" style={{ marginBottom: 0 }}>
+                    {formatPrice(data.usd)}
+                  </div>
+                  <MiniChart 
+                    data={priceHistory[crypto.id] || []} 
+                    isPositive={data.usd_24h_change >= 0}
+                  />
                 </div>
                 <div className={`crypto-change ${getChangeClass(data.usd_24h_change)}`}>
                   {formatChange(data.usd_24h_change)}
