@@ -1,7 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
-import { SolanaProvider } from './components/SolanaProvider'
+// TODO: Solana integration disabled temporarily due to React version conflict
+// import { SolanaProvider } from './components/SolanaProvider'
 import './styles/app.css'
 import './styles/theme.css'
 import './styles/professional-ui.css'
@@ -9,21 +10,29 @@ import './styles/professional-ui.css'
 // Asegurar que el scroll esté en la parte superior al cargar
 const resetScroll = () => {
   // Forzar scroll a 0 de múltiples formas
-  window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
-  window.scrollTo(0, 0)
-  document.documentElement.scrollTop = 0
-  document.documentElement.scrollLeft = 0
-  document.body.scrollTop = 0
-  document.body.scrollLeft = 0
-  
-  // También para cualquier contenedor con scroll
-  const scrollableElements = document.querySelectorAll('[style*="overflow"], .lobby-main, .chat-dock, .chat-list, #root')
-  scrollableElements.forEach(el => {
-    if (el instanceof HTMLElement) {
-      el.scrollTop = 0
-      el.scrollLeft = 0
+  try {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    window.scrollTo(0, 0)
+    if (document.documentElement) {
+      document.documentElement.scrollTop = 0
+      document.documentElement.scrollLeft = 0
     }
-  })
+    if (document.body) {
+      document.body.scrollTop = 0
+      document.body.scrollLeft = 0
+    }
+
+    // También para cualquier contenedor con scroll
+    const scrollableElements = document.querySelectorAll('[style*="overflow"], .lobby-main, .chat-dock, .chat-list, #root')
+    scrollableElements.forEach(el => {
+      if (el instanceof HTMLElement) {
+        el.scrollTop = 0
+        el.scrollLeft = 0
+      }
+    })
+  } catch {
+    // Ignore scroll errors during initial load
+  }
 }
 
 // Prevenir el scroll restoration del navegador ANTES de todo
@@ -62,8 +71,9 @@ setTimeout(() => {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <SolanaProvider>
+    {/* TODO: Re-enable SolanaProvider when React version conflict is resolved */}
+    {/* <SolanaProvider> */}
       <App />
-    </SolanaProvider>
+    {/* </SolanaProvider> */}
   </StrictMode>,
 )

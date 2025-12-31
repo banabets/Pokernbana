@@ -585,7 +585,8 @@ io.on('connection', async (socket) => {
           seats: room.seatsMax || 5,
           started: room.started || false,
           createdAt: room.createdAt || Date.now(),
-          updatedAt: Date.now()
+          updatedAt: Date.now(),
+          creatorId: room.creatorId,
         }
 
         io.to(chan(roomId)).emit(ServerEvents.TABLE_STATE, tableStateData)
@@ -671,7 +672,8 @@ io.on('connection', async (socket) => {
           seats: room.seatsMax || 5,
           started: room.started || false,
           createdAt: room.createdAt || Date.now(),
-          updatedAt: Date.now()
+          updatedAt: Date.now(),
+          creatorId: room.creatorId,
         })
 
         // Enviar historial de chat actualizado a todos los usuarios en la room
@@ -778,7 +780,8 @@ io.on('connection', async (socket) => {
           seats: room.seatsMax || 5,
           started: room.status === 'running',
           createdAt: room.createdAt || Date.now(),
-          updatedAt: Date.now()
+          updatedAt: Date.now(),
+          creatorId: room.creatorId,
         })
         break
       }
@@ -1021,6 +1024,7 @@ io.on('connection', async (socket) => {
         started: room.status === 'running',
         createdAt: Date.now(),
         updatedAt: Date.now(),
+        creatorId: room.creatorId,
       }
       // Send to ALL players at the table (including the new one)
       console.log('📡 SERVER: About to send TABLE_STATE to room:', room.id)
@@ -1079,6 +1083,7 @@ io.on('connection', async (socket) => {
       started: room.status === 'running',
       createdAt: Date.now(),
       updatedAt: Date.now(),
+      creatorId: room.creatorId,
     }
 
     socket.emit(ServerEvents.TABLE_STATE, state)
@@ -1145,6 +1150,7 @@ io.on('connection', async (socket) => {
         started: room.status === 'running',
         createdAt: Date.now(),
         updatedAt: Date.now(),
+        creatorId: room.creatorId,
       }
       console.log('📡 SERVER: Broadcasting updated table state to all players in room:', room.id)
       console.log('📡 SERVER: New state players:', state.players.map(p => ({ id: p.id, seat: p.seat })))
@@ -1201,6 +1207,7 @@ io.on('connection', async (socket) => {
           started: room.status === 'running',
           createdAt: Date.now(),
           updatedAt: Date.now(),
+          creatorId: room.creatorId,
         }
         console.log('📡 SERVER: Broadcasting updated table state after player left seat')
         io.to(chan(room.id)).emit(ServerEvents.TABLE_STATE, state)

@@ -94,3 +94,4 @@ shared/dist/
 # Repos anidados que no deben trackearse
 POKERN-clean/
 POKERNIGHT/
+.DS_Store
