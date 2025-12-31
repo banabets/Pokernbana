@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
+import { SolanaProvider } from './components/SolanaProvider'
 import './styles/app.css'
 import './styles/theme.css'
 import './styles/professional-ui.css'
@@ -61,6 +62,8 @@ setTimeout(() => {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <SolanaProvider>
+      <App />
+    </SolanaProvider>
   </StrictMode>,
 )

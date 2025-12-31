@@ -5,6 +5,8 @@ import BackgroundMusic from './components/BackgroundMusic'
 import AudioManager from './components/AudioManager'
 import RoomSearchFilters from './components/RoomSearchFilters'
 import EmojiPicker from './components/EmojiPicker'
+import WalletButton from './components/WalletButton'
+import { useSolana, NFTData } from './components/SolanaProvider'
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component<
@@ -232,8 +234,15 @@ function TopBar({
         />
       </div>
 
-      {/* Balance y hamburguesa juntos a la derecha */}
+      {/* Wallet, Balance y hamburguesa juntos a la derecha */}
       <div className="topbar-right">
+        <WalletButton compact onDeposit={(amount, sig) => {
+          console.log('Deposit:', amount, 'SOL, Signature:', sig)
+          // TODO: Agregar balance al juego después de confirmar depósito
+        }} onNFTSelect={(nft) => {
+          console.log('NFT selected as avatar:', nft.name)
+          // TODO: Enviar NFT como avatar al servidor
+        }} />
         <div className="balance-badge">
           <span className="balance-label">$</span>
           <span className="balance-amount">{balance.toLocaleString()}</span>

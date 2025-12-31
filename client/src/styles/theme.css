@@ -4528,3 +4528,532 @@ button, .pill {
     margin-right: 6px; /* Margen mínimo */
   }
 }
+
+/* ========== SOLANA WALLET STYLES ========== */
+.wallet-connect-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #9945FF, #14F195);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(153, 69, 255, 0.3);
+}
+
+.wallet-connect-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(153, 69, 255, 0.4);
+}
+
+.wallet-connect-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.wallet-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.wallet-connected {
+  position: relative;
+}
+
+.wallet-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, rgba(153, 69, 255, 0.2), rgba(20, 241, 149, 0.2));
+  border: 1px solid rgba(153, 69, 255, 0.3);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.wallet-info:hover {
+  background: linear-gradient(135deg, rgba(153, 69, 255, 0.3), rgba(20, 241, 149, 0.3));
+  border-color: rgba(153, 69, 255, 0.5);
+}
+
+.wallet-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid rgba(153, 69, 255, 0.5);
+}
+
+.wallet-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wallet-balance-label {
+  font-weight: 700;
+  font-size: 14px;
+  color: #14F195;
+}
+
+.wallet-address-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: monospace;
+}
+
+.wallet-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: rgba(20, 20, 30, 0.95);
+  border: 1px solid rgba(153, 69, 255, 0.3);
+  border-radius: 12px;
+  padding: 8px;
+  min-width: 180px;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+.wallet-menu button {
+  width: 100%;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.wallet-menu button:hover {
+  background: rgba(153, 69, 255, 0.2);
+}
+
+/* Wallet Compact Mode */
+.wallet-compact {
+  position: relative;
+}
+
+.wallet-compact-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, rgba(153, 69, 255, 0.3), rgba(20, 241, 149, 0.2));
+  border: 1px solid rgba(153, 69, 255, 0.4);
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.wallet-compact-btn:hover {
+  background: linear-gradient(135deg, rgba(153, 69, 255, 0.4), rgba(20, 241, 149, 0.3));
+}
+
+.wallet-compact-btn .wallet-balance {
+  font-weight: 700;
+  color: #14F195;
+  font-size: 13px;
+}
+
+.wallet-compact-btn .wallet-address {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: monospace;
+}
+
+.wallet-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: rgba(15, 15, 25, 0.98);
+  border: 1px solid rgba(153, 69, 255, 0.4);
+  border-radius: 16px;
+  padding: 16px;
+  min-width: 240px;
+  z-index: 1000;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.wallet-dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 12px;
+}
+
+.wallet-dropdown-header .wallet-avatar {
+  width: 40px;
+  height: 40px;
+}
+
+.wallet-dropdown-header .wallet-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: white;
+}
+
+.wallet-dropdown-header .wallet-addr {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: monospace;
+}
+
+.wallet-dropdown-balance {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: rgba(20, 241, 149, 0.1);
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.wallet-dropdown-balance span {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+}
+
+.wallet-dropdown-balance strong {
+  color: #14F195;
+  font-size: 16px;
+}
+
+.wallet-dropdown-btn {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+}
+
+.wallet-dropdown-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.wallet-dropdown-btn.deposit {
+  background: linear-gradient(135deg, rgba(20, 241, 149, 0.2), rgba(20, 241, 149, 0.1));
+  border-color: rgba(20, 241, 149, 0.3);
+}
+
+.wallet-dropdown-btn.deposit:hover {
+  background: linear-gradient(135deg, rgba(20, 241, 149, 0.3), rgba(20, 241, 149, 0.2));
+}
+
+.wallet-dropdown-btn.nfts {
+  background: linear-gradient(135deg, rgba(153, 69, 255, 0.2), rgba(153, 69, 255, 0.1));
+  border-color: rgba(153, 69, 255, 0.3);
+}
+
+.wallet-dropdown-btn.nfts:hover {
+  background: linear-gradient(135deg, rgba(153, 69, 255, 0.3), rgba(153, 69, 255, 0.2));
+}
+
+.wallet-dropdown-btn.disconnect {
+  background: rgba(255, 100, 100, 0.1);
+  border-color: rgba(255, 100, 100, 0.2);
+  color: #ff6b6b;
+}
+
+.wallet-dropdown-btn.disconnect:hover {
+  background: rgba(255, 100, 100, 0.2);
+}
+
+/* Modal Overlay */
+.wallet-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(5px);
+}
+
+.wallet-modal {
+  background: linear-gradient(180deg, rgba(25, 25, 40, 0.98), rgba(15, 15, 25, 0.98));
+  border: 1px solid rgba(153, 69, 255, 0.3);
+  border-radius: 20px;
+  padding: 24px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.wallet-modal h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+}
+
+.wallet-modal-balance {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.wallet-modal-subtitle {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.deposit-input-group {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 16px;
+}
+
+.deposit-input-group input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 12px;
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  outline: none;
+}
+
+.deposit-input-group input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.deposit-currency {
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(153, 69, 255, 0.3), rgba(20, 241, 149, 0.2));
+  border-radius: 10px;
+  font-weight: 700;
+  color: #14F195;
+}
+
+.deposit-quick-amounts {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.deposit-quick-amounts button {
+  flex: 1;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.deposit-quick-amounts button:hover {
+  background: rgba(153, 69, 255, 0.2);
+  border-color: rgba(153, 69, 255, 0.4);
+}
+
+.deposit-error {
+  color: #ff6b6b;
+  font-size: 13px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: rgba(255, 100, 100, 0.1);
+  border-radius: 8px;
+}
+
+.wallet-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.wallet-modal-actions button {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-confirm {
+  background: linear-gradient(135deg, #9945FF, #14F195);
+  border: none;
+  color: white;
+}
+
+.btn-confirm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(153, 69, 255, 0.4);
+}
+
+.btn-confirm:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-close {
+  width: 100%;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+.btn-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* NFT Modal */
+.nft-modal {
+  max-width: 500px;
+}
+
+.nft-loading,
+.nft-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.nft-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.nft-item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nft-item:hover {
+  background: rgba(153, 69, 255, 0.2);
+  border-color: rgba(153, 69, 255, 0.5);
+  transform: scale(1.02);
+}
+
+.nft-item img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.nft-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.nft-collection {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+/* Responsive para wallet */
+@media (max-width: 768px) {
+  .wallet-connect-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .wallet-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .wallet-info {
+    padding: 6px 10px;
+    gap: 8px;
+  }
+
+  .wallet-avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .wallet-balance-label {
+    font-size: 12px;
+  }
+
+  .wallet-address-label {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .wallet-modal {
+    width: 95%;
+    padding: 16px;
+  }
+
+  .nft-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

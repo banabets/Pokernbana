@@ -94,9 +94,28 @@ const io = new Server(server, {
     origin: '*',
     methods: ['GET', 'POST']
   },
-  transports: ['polling', 'websocket']
+  transports: ['polling', 'websocket'],
+  pingTimeout: 60000,      // 60 segundos para responder al ping
+  pingInterval: 25000,     // Ping cada 25 segundos
+  upgradeTimeout: 30000,   // 30 segundos para upgrade a websocket
+  maxHttpBufferSize: 1e6,  // 1MB max buffer
+  connectTimeout: 45000    // 45 segundos para conectar
 })
-console.log('🚀 SERVER: Socket.IO server configured')
+console.log('🚀 SERVER: Socket.IO server configured with extended timeouts')
+
+// ========== GLOBAL ERROR HANDLERS ==========
+// Prevenir que el servidor se caiga por errores no capturados
+process.on('uncaughtException', (err) => {
+  console.error('❌ UNCAUGHT EXCEPTION - Server will continue running:')
+  console.error(err.name, err.message)
+  console.error(err.stack)
+})
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ UNHANDLED REJECTION - Server will continue running:')
+  console.error('Promise:', promise)
+  console.error('Reason:', reason)
+})
 
 const engines = new Map<string, ImprovedEngine>()
 const rooms = new Map<string, RoomData>()
@@ -844,7 +863,8 @@ io.on('connection', async (socket) => {
       bigBlind: config?.bigBlind || 10,
       status: 'waiting',
       handNumber: 0,
-      dealerPos: -1
+      dealerPos: -1,
+      creatorId: userId // El creador de la sala
     }
     const buyInAmount = config?.buyIn || 2000
     // Deduct table creation cost from user balance

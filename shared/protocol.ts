@@ -39,6 +39,7 @@ export interface TableState {
   createdAt: number
   updatedAt: number
   sidePots?: any[]
+  creatorId?: string
 }
 
 export interface LobbyRoomSummary {

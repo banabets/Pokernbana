@@ -46,6 +46,7 @@ export type RoomData = {
   toAct?: string | null
   started?: boolean
   createdAt?: number
+  creatorId?: string
 }
 
 export type PayoutHook = (winnerIds: string[], amountEach: number, handNumber: number) => void
@@ -938,6 +939,7 @@ export class ImprovedEngine {
       street: this.street, toAct: this.toAct, handNumber: this.room.handNumber,
       seats: this.room.seatsMax, started: true,
       createdAt: Date.now(), updatedAt: Date.now(),
+      creatorId: this.room.creatorId,
     }
 
     console.log('🚀 SERVER: Sending TABLE_STATE to room:', this.room.id)

@@ -48,24 +48,33 @@ const ActionBarContainer = styled.div`
   }
 
   @media (max-width: 480px) {
-    bottom: 8px; /* Un poco más arriba */
-    left: 6px;
-    right: 6px;
+    bottom: 6px;
+    left: 4px;
+    right: 4px;
     transform: none;
-    padding: 4px 6px; /* Padding mínimo pero presente */
-    gap: 2px; /* Gap pequeño */
+    padding: 6px 8px;
+    gap: 4px;
     min-width: auto;
     max-width: none;
-    width: calc(100vw - 12px); /* Casi pantalla completa */
+    width: calc(100vw - 8px);
     flex-direction: row;
-    flex-wrap: wrap; /* Permitir wrap */
-    justify-content: space-around;
+    flex-wrap: wrap;
+    justify-content: center;
     align-items: center;
-    border-radius: 10px; /* Bordes redondeados sutiles */
-    background: rgba(0, 0, 0, 0.35); /* Fondo sutil */
-    backdrop-filter: blur(6px); /* Blur sutil */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Sombra sutil */
-    border: 1px solid rgba(255, 255, 255, 0.08); /* Borde sutil */
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  @media (max-width: 380px) {
+    bottom: 4px;
+    left: 2px;
+    right: 2px;
+    padding: 4px 6px;
+    gap: 3px;
+    width: calc(100vw - 4px);
   }
 `
 
@@ -105,17 +114,22 @@ const ActionButton = styled.button<{ $variant?: 'primary' | 'success' | 'warning
   }
 
   @media (max-width: 480px) {
-    min-width: 38px; /* Ancho aún más pequeño */
-    flex: 1 1 auto; /* Flex para distribución */
-    padding: 2px 4px; /* Padding mínimo */
-    font-size: 10px; /* Fuente más pequeña */
-    min-height: 24px; /* Altura mínima pero funcional */
-    line-height: 0.8rem;
-    border-radius: 4px; /* Bordes más pequeños */
-    /* Sin fondo individual - usa el contenedor */
-    backdrop-filter: none; /* Sin blur individual */
-    border: none; /* Sin borde individual */
-    box-shadow: none; /* Sin sombra individual */
+    min-width: 50px;
+    flex: 1 1 auto;
+    padding: 8px 10px;
+    font-size: 11px;
+    min-height: 36px;
+    line-height: 1rem;
+    border-radius: 8px;
+    font-weight: 700;
+  }
+
+  @media (max-width: 380px) {
+    min-width: 42px;
+    padding: 6px 8px;
+    font-size: 10px;
+    min-height: 32px;
+    border-radius: 6px;
   }
 
   &:focus {
@@ -216,8 +230,16 @@ const BetInput = styled.input`
   }
 
   @media (max-width: 480px) {
-    min-width: 70px;
-    max-width: 90px;
+    min-width: 60px;
+    max-width: 80px;
+    font-size: 13px;
+    padding: 6px 8px;
+    border-radius: 8px;
+  }
+
+  @media (max-width: 380px) {
+    min-width: 50px;
+    max-width: 70px;
     font-size: 12px;
     padding: 5px 6px;
   }

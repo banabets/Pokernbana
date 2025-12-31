@@ -1014,7 +1014,10 @@ export default function Table({
           Room: {state.roomId} • <b>Pot {state.pot}</b> • Bet {state.currentBet} • Street {state.street} • To act {state.toAct?.slice(0,4)}
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
-          <button onClick={startHand}>Start hand</button>
+          {/* Solo el creador puede iniciar la mano */}
+          {myId === state.creatorId && (
+            <button onClick={startHand}>Start hand</button>
+          )}
         </div>
       </TopBar>
 
@@ -1256,9 +1259,12 @@ export default function Table({
           <button onClick={handleBackToLobby}>← Lobby</button>
         </div>
 
-        <div className="table-start-button">
-          <button onClick={startHand}>⚡ Start</button>
-        </div>
+        {/* Solo el creador puede iniciar la mano */}
+        {myId === state.creatorId && (
+          <div className="table-start-button">
+            <button onClick={startHand}>⚡ Start</button>
+          </div>
+        )}
       </div>
     </div>
   )

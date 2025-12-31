@@ -83,13 +83,13 @@ export function useSocket(onDataRestored?: (data: {
 
     const newSocket = io(serverUrl, {
       transports: ['polling', 'websocket'],
-      timeout: 10000, // Increased timeout
+      timeout: 20000, // 20 segundos timeout
       forceNew: false,
       reconnection: true,
-      reconnectionAttempts: 10, // More attempts
-      reconnectionDelay: 2000, // Longer delay between attempts
-      reconnectionDelayMax: 10000, // Max delay
-      randomizationFactor: 0.5,
+      reconnectionAttempts: Infinity, // Reconexión infinita
+      reconnectionDelay: 1000, // 1 segundo inicial
+      reconnectionDelayMax: 5000, // Max 5 segundos entre intentos
+      randomizationFactor: 0.3,
       upgrade: true,
       // Add unique identifier to ensure completely separate connections
       query: { clientId: uniqueId }
