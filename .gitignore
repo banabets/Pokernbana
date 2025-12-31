@@ -89,6 +89,7 @@ shared/dist/
 !client/public/logo2.png
 !client/public/vipi.png
 !client/public/123.mp4
+!client/public/dealer.png
 
 # Repos anidados que no deben trackearse
 POKERN-clean/

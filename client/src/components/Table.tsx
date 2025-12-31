@@ -25,7 +25,7 @@ import {
 
 // ✅ rutas robustas
 const BASE       = (import.meta as any).env.BASE_URL || '/'
-const DEALER_SRC = `${BASE}assets/dealer.png`
+const DEALER_SRC = `${BASE}dealer.png`  // En /public/dealer.png
 const BG_SRC     = `${BASE}assets/room-bg.png`
 
 // ======== Ajustes visuales ========
